@@ -55,10 +55,6 @@ public class Square implements IGizmo {
         return circles;
     }
 
-    @Override
-    public Circle getGizCircle() {
-        return new Circle(-1,-1,0);
-    }
 
     @Override
     public String getID() {

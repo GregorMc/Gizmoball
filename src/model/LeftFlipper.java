@@ -61,10 +61,6 @@ public class LeftFlipper implements IGizmo, IFlipper{
 
 
 
-    @Override
-    public Circle getGizCircle() {
-        return null;
-    }
 
     @Override
     public String getID() {

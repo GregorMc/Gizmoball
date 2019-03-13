@@ -153,11 +153,6 @@ public class Triangle implements IGizmo {
         return circleSegs;
     }
 
-    @Override
-    //Should never get called
-    public Circle getGizCircle() {
-        return new Circle(-1,-1,0);
-    }
 
     @Override
     public String getID() {

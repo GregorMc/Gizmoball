@@ -13,7 +13,6 @@ public class CircleGiz implements IGizmo {
     private String gizid;
     private final int L= 25;
     private final double radius = 12.5;
-    private final String type = "Circle";
 
     public CircleGiz(String id, int x, int y) {
         this.gizid = id;
@@ -21,10 +20,6 @@ public class CircleGiz implements IGizmo {
         this.ypos = y;
     }
 
-    @Override
-    public Circle getGizCircle() {
-        return new Circle((xpos*L)+radius,(ypos*L)+radius,radius);
-    }
 
     @Override
     public String getID() {
@@ -48,7 +43,12 @@ public class CircleGiz implements IGizmo {
 
     @Override
     public List<Circle> getCircles() {
-        return Collections.emptyList();
+        List<Circle> circles = new ArrayList<>();
+
+        Circle c = new Circle((xpos*L)+radius,(ypos*L)+radius,radius);
+        circles.add(c);
+
+        return circles;
     }
 
 }

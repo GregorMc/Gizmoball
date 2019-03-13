@@ -57,10 +57,6 @@ public class Absorber implements IGizmo {
         return circles;
     }
 
-    @Override
-    public Circle getGizCircle() {
-        return null;
-    }
 
     @Override
     public String getID() {

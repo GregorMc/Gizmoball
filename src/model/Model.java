@@ -122,14 +122,6 @@ public class Model extends Observable {
         //Time to collide with any Circle Gizmos
         //FIXME a lot of repeating code, maybe try get working with gizmo interface?
         for(IGizmo g: gizmos) {
-            if (g instanceof CircleGiz) {
-                Circle c = g.getGizCircle();
-                time = Geometry.timeUntilCircleCollision(c, ballCircle, ballVelo);
-                if (time < shortestTime) {
-                    shortestTime = time;
-                    newVelo = Geometry.reflectCircle(c.getCenter(), (ball.getCircle().getCenter()), ballVelo);
-                }
-            } else {
                 for (LineSegment lineSegs : g.getLineSegments()) {
                     time = Geometry.timeUntilWallCollision(lineSegs, ballCircle, ballVelo);
                     if (time < shortestTime) {
@@ -150,7 +142,7 @@ public class Model extends Observable {
                         newVelo = Geometry.reflectCircle(c.getCenter(), (ball.getCircle().getCenter()), ballVelo);
                     }
                 }
-            }
+
         }
         return new CollisionDetails(shortestTime,newVelo);
     }
