@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import model.*;
+import physics.Circle;
 
 /**
  * @author Murray Wood Demonstration of MVC and MIT Physics Collisions 2014
@@ -66,14 +67,14 @@ public  class Board extends JPanel implements Observer {
                 g2.drawPolygon(t.getXpos(),t.getYpos(),3);
             } else if(gizmo instanceof  Square){
                 Square s = (Square)gizmo;
-                g2.drawRect(s.getXposInP(),s.getYposInP(), L, L);
+                g2.drawRect(s.getXpos(),s.getYpos(), L, L);
             } else if(gizmo instanceof CircleGiz){
                 CircleGiz c = (CircleGiz) gizmo;
-                Ellipse2D.Double circle = new Ellipse2D.Double(c.getXposinP(),c.getYposinP(), L, L);
+                Ellipse2D.Double circle = new Ellipse2D.Double(c.getXposinL(),c.getYposinL(), L, L);
                 g2.draw(circle);
             } else if (gizmo instanceof Absorber){
                 Absorber a = (Absorber) gizmo;
-                g2.drawRect(a.getXpos1InP(),a.getYpos1InP(),Math.abs(a.getXpos2InP()-a.getXpos1InP()),Math.abs(a.getYpos2InP()-a.getYpos1InP()));
+                g2.drawRect(a.getXpos1InL(),a.getYpos1InL(),Math.abs(a.getXpos2InL()-a.getXpos1InL()),Math.abs(a.getYpos2InL()-a.getYpos1InL()));
             } //FIXME draw flippers seperate
         }
 
@@ -104,11 +105,12 @@ public  class Board extends JPanel implements Observer {
         Ball b = gm.getBall();
         if (b != null) {
             g2.setColor(b.getColour());
-            int x = (int) (b.getXinPixels() - b.getRadius());
-            int y = (int) (b.getYinPixels() - b.getRadius());
+            int x = (int) (b.getExactX() - b.getRadius());
+            int y = (int) (b.getExactY() - b.getRadius());
             int width = (int) (2 * b.getRadius());
             g2.fillOval(x, y, width, width);
         }
+        this.requestFocus();
 
     }
 

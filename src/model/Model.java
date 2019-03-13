@@ -20,7 +20,10 @@ public class Model extends Observable {
     private List<IGizmo> gizmos;
     private List<IFlipper> flippers;
 
-    private int gravity;
+    private final int MAXANGLE = 90;
+    private final int MINANGLE = 0;
+
+    private double gravity;
 
     private Ball ball;
     private Walls walls;
@@ -28,21 +31,20 @@ public class Model extends Observable {
     private double MU2;
 
     public Model(){
-        this.ball = new Ball("FB",1,1,10,10);
+        this.ball = new Ball("FB",1,1,100,100);
         this.walls = new Walls(0,0,20,20);
 
         this.gizmos = new ArrayList<>();
         this.flippers = new ArrayList<>();
 
-        this.MU = 0.025D;
-        this.MU2 = 0.025D;
-        this.gravity = 25;
-
+        this.MU = 0.025/25;
+        this.MU2 = 0.025/25;
+        this.gravity = 25.0*25;
     }
 
     public void moveBall(){
 
-        double moveTime = 0.05D; // 0.05 = 20 times per second as per Gizmoball
+        double moveTime = 0.05; // 0.05 = 20 times per second as per Gizmoball
 
         if (ball != null && !ball.stopped()) {
 
@@ -50,17 +52,32 @@ public class Model extends Observable {
             double tuc = cd.getTuc();
             if (tuc > moveTime) {
                 // No collision ...
-                ball = movelBallForTime(ball,moveTime);
+                ball = movelBallForTime(ball, moveTime);
+
+
+//                Vect newVelo = new Vect(ball.getVelo().x(), (ball.getVelo().y() + (25 * 0.05)));  //doesn't work the same
+//                ball.setVelo(newVelo);
+//                double oldY = ball.getVelo().y();
+//                double oldX = ball.getVelo().x();
+//
+//                double Ynew = ((oldY * (1 - (MU * 0.05) - (MU2 * oldY) * 0.05)));
+//                double Xnew = ((oldX * (1 - (MU * 0.05) - (MU2 * oldX) * 0.05)));
+//                Ynew = Math.abs(Ynew / 25);
+//                Xnew = Math.abs(Xnew / 25);
+//                Vect evenNewerVelo = ball.getVelo().minus(new Vect(-Xnew, -Ynew));
+//                ball.setVelo(evenNewerVelo);
+
+                applyGravity(moveTime);
+                applyFriction(moveTime);
 
             } else {
                 // We've got a collision in tuc
                 ball = movelBallForTime(ball, tuc);
+                applyGravity(tuc);
+                applyFriction(tuc);
                 // Post collision velocity ...
                 ball.setVelo(cd.getVelo());
             }
-
-            applyGravity(moveTime);
-            applyFriciton(moveTime);
             // No satisficingtify observers ... redraw updated view
             this.setChanged();
             this.notifyObservers();
@@ -68,16 +85,21 @@ public class Model extends Observable {
 
     }
 
-    private void applyGravity(double time){
+
+    public void applyGravity(double time){
         double yafter = ball.getVelo().y() + gravity * time;
         ball.setVelo(new Vect(ball.getVelo().x(), yafter));
     }
 
-    private void applyFriciton(double time){
-        double xafter = ball.getVelo().x() * (1.0 - (MU * time) - (MU2 * (Math.abs(ball.getVelo().length()) * time)));
-        double yafter = ball.getVelo().y() * (1.0 - (MU * time) - (MU2 * (Math.abs(ball.getVelo().length()) * time)));
-        ball.setVelo(new Vect(xafter, yafter));
+    public void applyFriction(double time){
+        double xafter = ball.getVelo().x() * (1.0 - (MU * time) - (MU2 * (Math.abs(ball.getVelo().length())) * time));
+        double yafter = ball.getVelo().y() * (1.0 - (MU * time) - (MU2 * (Math.abs(ball.getVelo().length())) * time));
+        ball.setVelo(new Vect(xafter,yafter));
     }
+
+
+
+
 
     public CollisionDetails timeUntilCollision(){
         Circle ballCircle = ball.getCircle();
@@ -100,6 +122,14 @@ public class Model extends Observable {
         //Time to collide with any Circle Gizmos
         //FIXME a lot of repeating code, maybe try get working with gizmo interface?
         for(IGizmo g: gizmos) {
+            if (g instanceof CircleGiz) {
+                Circle c = g.getGizCircle();
+                time = Geometry.timeUntilCircleCollision(c, ballCircle, ballVelo);
+                if (time < shortestTime) {
+                    shortestTime = time;
+                    newVelo = Geometry.reflectCircle(c.getCenter(), (ball.getCircle().getCenter()), ballVelo);
+                }
+            } else {
                 for (LineSegment lineSegs : g.getLineSegments()) {
                     time = Geometry.timeUntilWallCollision(lineSegs, ballCircle, ballVelo);
                     if (time < shortestTime) {
@@ -121,20 +151,21 @@ public class Model extends Observable {
                     }
                 }
             }
+        }
         return new CollisionDetails(shortestTime,newVelo);
     }
 
-    private Ball movelBallForTime(Ball b, double time) {
+    private Ball movelBallForTime(Ball ball, double time) {
 
         double newX = 0.0;
         double newY = 0.0;
-        double xVel = b.getVelo().x();
-        double yVel = b.getVelo().y();
-        newX = b.getExactX() + (xVel * time);
-        newY = b.getExactY() + (yVel * time);
-        b.setExactX(newX);
-        b.setExactY(newY);
-        return b;
+        double xVel = ball.getVelo().x();
+        double yVel = ball.getVelo().y();
+        newX = ball.getExactX() + (xVel * time);
+        newY = ball.getExactY() + (yVel * time);
+        ball.setExactX(newX);
+        ball.setExactY(newY);
+        return ball;
     }
 
     //Adding gizmos
@@ -172,11 +203,11 @@ public class Model extends Observable {
         for (IFlipper fl : flippers) {
 
             if (fl.isActivated()) {
-                if (fl.getAngle() < 90) {
+                if (fl.getAngle() < MAXANGLE) {
                     fl.setAngle(fl.getAngle() + 5);
                 }
             } else {
-                if (fl.getAngle() > 0) {
+                if (fl.getAngle() > MINANGLE) {
                     fl.setAngle(fl.getAngle() - 5);
                 }
             }

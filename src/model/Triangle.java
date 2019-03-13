@@ -154,6 +154,12 @@ public class Triangle implements IGizmo {
     }
 
     @Override
+    //Should never get called
+    public Circle getGizCircle() {
+        return new Circle(-1,-1,0);
+    }
+
+    @Override
     public String getID() {
         return gizmoid;
     }

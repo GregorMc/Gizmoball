@@ -22,15 +22,20 @@ public class CircleGiz implements IGizmo {
     }
 
     @Override
+    public Circle getGizCircle() {
+        return new Circle((xpos*L)+radius,(ypos*L)+radius,radius);
+    }
+
+    @Override
     public String getID() {
         return  gizid;
     }
 
-    public int getXposinP(){
+    public int getXposinL(){
         return xpos*L;
     }
 
-    public int getYposinP(){
+    public int getYposinL(){
         return ypos*L;
     }
 
@@ -43,9 +48,7 @@ public class CircleGiz implements IGizmo {
 
     @Override
     public List<Circle> getCircles() {
-        List<Circle> cirlces = new ArrayList<>();
-        cirlces.add(new Circle((xpos*L)+radius,(ypos*L)+radius,radius));
-        return cirlces;
+        return Collections.emptyList();
     }
 
 }

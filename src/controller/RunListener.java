@@ -26,7 +26,6 @@ public class RunListener implements ActionListener {
     public final void actionPerformed(final ActionEvent e) {
 
         if (e.getSource() == timer) {
-            System.out.println("tick");
             model.moveBall();
             model.moveFlippers();
         } else

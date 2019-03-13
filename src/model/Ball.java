@@ -24,11 +24,11 @@ public class Ball {
     // x, y coordinates and x,y velocity fixme Need to be in L's
     public Ball(String ballid, double x, double y, double xv, double yv) {
         this.id = ballid;
-        xpos = x; // Centre coordinates
-        ypos = y;
+        xpos = x*L; // Centre coordinates
+        ypos = y*L;
         colour = Color.BLUE;
         velocity = new Vect(xv, yv);
-        radius = 7;
+        radius = 8;
         stopped = false;
     }
 
@@ -45,24 +45,17 @@ public class Ball {
     }
 
     public Circle getCircle() {
-        return new Circle((xpos*L)+radius, (ypos*L)+radius, radius);
+        return new Circle(xpos, ypos, radius);
+
     }
 
-    //Ball specific methods that deal with double precision.
+    // Ball specific methods that deal with double precision.
     public double getExactX() {
         return xpos;
     }
 
     public double getExactY() {
         return ypos;
-    }
-
-    public double getXinPixels(){
-        return xpos*L;
-    }
-
-    public double getYinPixels(){
-        return ypos*L;
     }
 
     public void setExactX(double x) {

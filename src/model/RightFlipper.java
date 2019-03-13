@@ -62,6 +62,10 @@ public class RightFlipper implements IGizmo, IFlipper{
         return circles;
     }
 
+    @Override
+    public Circle getGizCircle() {
+        return null;
+    }
 
     @Override
     public String getID() {

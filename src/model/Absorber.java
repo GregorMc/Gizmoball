@@ -58,18 +58,23 @@ public class Absorber implements IGizmo {
     }
 
     @Override
+    public Circle getGizCircle() {
+        return null;
+    }
+
+    @Override
     public String getID() {
         return id;
     }
 
 
-    public int getXpos1InP(){ return (xpos1*L); }
+    public int getXpos1InL(){ return (xpos1*L); }
 
-    public int getXpos2InP(){ return (xpos2*L); }
+    public int getXpos2InL(){ return (xpos2*L); }
 
-    public int getYpos1InP() { return (ypos1*L); }
+    public int getYpos1InL() { return (ypos1*L); }
 
-    public int getYpos2InP() { return (ypos2*L); }
+    public int getYpos2InL() { return (ypos2*L); }
 
     public int getXpos(){ return xpos1; }
 

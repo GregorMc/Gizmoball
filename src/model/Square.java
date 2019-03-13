@@ -55,6 +55,10 @@ public class Square implements IGizmo {
         return circles;
     }
 
+    @Override
+    public Circle getGizCircle() {
+        return new Circle(-1,-1,0);
+    }
 
     @Override
     public String getID() {
@@ -62,11 +66,11 @@ public class Square implements IGizmo {
     }
 
     //Getters and Setters
-    public int getXposInP(){
+    public int getXpos(){
         return xpos*L;
     }
 
-    public int getYposInP(){
+    public int getYpos(){
         return ypos*L;
     }
 
