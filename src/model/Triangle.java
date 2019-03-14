@@ -112,7 +112,7 @@ public class Triangle implements IGizmo {
                 lineSegments.put("west", new LineSegment((xpos*L),(ypos*L),(xpos*L),(ypos*L)+L));
                 break;
             case 1: //Rotation 1 FIXME Change positions
-                lineSegments.put("west",new LineSegment((xpos*L),(ypos*L),(xpos*L),(ypos*L)+L));
+                lineSegments.put("west",new LineSegment((xpos*L),(ypos*L),((xpos*L)+L),(ypos*L)+L));
                 lineSegments.put("hypotenuse",new LineSegment((xpos*L),(ypos*L),((xpos*L)+L),((ypos*L)+L)));
                 lineSegments.put("north",new LineSegment(((xpos*L)+L),((ypos*L)+L), ((xpos*L)+L), (ypos*L)));
                 break;

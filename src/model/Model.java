@@ -1,6 +1,5 @@
 package model;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import physics.Circle;
 import physics.Geometry;
 import physics.LineSegment;
@@ -20,8 +19,10 @@ public class Model extends Observable {
     private List<IGizmo> gizmos;
     private List<IFlipper> flippers;
 
+    private final int L = 25;
     private final int MAXANGLE = 90;
     private final int MINANGLE = 0;
+    private boolean absorbCollision = false;
 
     private double gravity;
 
@@ -37,14 +38,16 @@ public class Model extends Observable {
         this.gizmos = new ArrayList<>();
         this.flippers = new ArrayList<>();
 
+
         this.MU = 0.025/25;
         this.MU2 = 0.025/25;
-        this.gravity = 25.0*25;
+        this.gravity = 25.0*20;
     }
 
     public void moveBall(){
 
         double moveTime = 0.05; // 0.05 = 20 times per second as per Gizmoball
+
 
         if (ball != null && !ball.stopped()) {
 
@@ -54,25 +57,15 @@ public class Model extends Observable {
                 // No collision ...
                 ball = movelBallForTime(ball, moveTime);
 
-
-//                Vect newVelo = new Vect(ball.getVelo().x(), (ball.getVelo().y() + (25 * 0.05)));  //doesn't work the same
-//                ball.setVelo(newVelo);
-//                double oldY = ball.getVelo().y();
-//                double oldX = ball.getVelo().x();
-//
-//                double Ynew = ((oldY * (1 - (MU * 0.05) - (MU2 * oldY) * 0.05)));
-//                double Xnew = ((oldX * (1 - (MU * 0.05) - (MU2 * oldX) * 0.05)));
-//                Ynew = Math.abs(Ynew / 25);
-//                Xnew = Math.abs(Xnew / 25);
-//                Vect evenNewerVelo = ball.getVelo().minus(new Vect(-Xnew, -Ynew));
-//                ball.setVelo(evenNewerVelo);
-
                 applyGravity(moveTime);
                 applyFriction(moveTime);
 
             } else {
                 // We've got a collision in tuc
                 ball = movelBallForTime(ball, tuc);
+                if(cd.getHitGiz() instanceof Absorber){
+                    prepareLaunch((Absorber)cd.getHitGiz());
+                }
                 applyGravity(tuc);
                 applyFriction(tuc);
                 // Post collision velocity ...
@@ -97,7 +90,18 @@ public class Model extends Observable {
         ball.setVelo(new Vect(xafter,yafter));
     }
 
+    public void prepareLaunch(Absorber absorber){
+        ball.stop();
+        ball.setExactX((absorber.getXpos2()-0.5)*25);
+        ball.setExactY((absorber.getYpos2()-0.75)*25);
 
+    }
+
+    public void launchBall(){
+        ball.setExactY(ball.getExactY()-(2*L));
+        setBallSpeed(ball.getVelo().x(), -50*L);
+        ball.start();
+    }
 
 
 
@@ -106,6 +110,7 @@ public class Model extends Observable {
         Vect ballVelo = ball.getVelo();
         Vect newVelo = new Vect(0,0);
 
+        IGizmo collisionGiz = new Square("Fake", -1,-1);
         double shortestTime = Double.MAX_VALUE;
         double time = 0.0;
 
@@ -126,12 +131,8 @@ public class Model extends Observable {
                     time = Geometry.timeUntilWallCollision(lineSegs, ballCircle, ballVelo);
                     if (time < shortestTime) {
                         shortestTime = time;
+                        collisionGiz = g;
                         newVelo = Geometry.reflectWall(lineSegs, ballVelo, 1.0);
-                        if(g instanceof Absorber && time < 0.01){
-                            ball.stop();
-                            ball.setExactX((((Absorber) g).getXpos2()-0.5)*25);
-                            ball.setExactY((((Absorber) g).getYpos2()-0.75)*25);
-                        }
                     }
                 }
                 //Time to collide with square circles
@@ -139,12 +140,13 @@ public class Model extends Observable {
                     time = Geometry.timeUntilCircleCollision(c, ballCircle, ballVelo);
                     if (time < shortestTime) {
                         shortestTime = time;
+                        collisionGiz = g;
                         newVelo = Geometry.reflectCircle(c.getCenter(), (ball.getCircle().getCenter()), ballVelo);
                     }
                 }
 
         }
-        return new CollisionDetails(shortestTime,newVelo);
+        return new CollisionDetails(shortestTime,newVelo, collisionGiz);
     }
 
     private Ball movelBallForTime(Ball ball, double time) {

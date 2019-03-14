@@ -63,6 +63,8 @@ public class RunGui {
 
         // Board is passed the Model so it can act as Observer
         board = new Board(500, 500, model, this);
+        board.addKeyListener(fl);
+        board.addKeyListener(al);
 
         Container cp = frame.getContentPane();
 

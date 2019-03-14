@@ -14,10 +14,12 @@ public class Absorber implements IGizmo {
     private int ypos1;
     private int xpos2;
     private int ypos2;
+    private LineSegment northLine;
     private String id;
     public final Color colour = Color.PINK;
 
     public Absorber(String gizid, int x1,int y1,int x2,int y2){
+        this.northLine = new LineSegment((x1*L), (y1*L),(x2*L), (y1*L));
         this.id = gizid;
         this.xpos1 = x1;
         this.ypos1 = y1;
@@ -28,17 +30,21 @@ public class Absorber implements IGizmo {
     public List<LineSegment> getLineSegments() {
         List<LineSegment> lineSegments = new ArrayList<>();
 
-        LineSegment l1 = new LineSegment((xpos1*L),(ypos1*L),(xpos2*L),(ypos1*L));
+        northLine = new LineSegment((xpos1*L),(ypos1*L),(xpos2*L),(ypos1*L));
         LineSegment l2 = new LineSegment((xpos2*L),(ypos1*L),(xpos2*L),(ypos2*L));
         LineSegment l3 = new LineSegment((xpos2*L),(ypos2*L),(xpos1*L),(ypos2*L));
         LineSegment l4 = new LineSegment((xpos1*L),(ypos2*L),(xpos1*L),(ypos1*L));
 
-        lineSegments.add(l1);
+        lineSegments.add(northLine);
         lineSegments.add(l2);
         lineSegments.add(l3);
         lineSegments.add(l4);
 
         return lineSegments;
+    }
+
+    public LineSegment getNorthLine() {
+        return northLine;
     }
 
     public List<Circle> getCircles() {
