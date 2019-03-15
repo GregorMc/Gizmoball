@@ -67,9 +67,6 @@ public class RunGui {
 
         board.addKeyListener(magicKeyListener);
 
-        //board.addKeyListener(fl);
-        //board.addKeyListener(al);
-
         Container cp = frame.getContentPane();
 
         buildMenu = makeBuildComp.createBuildMenu();
