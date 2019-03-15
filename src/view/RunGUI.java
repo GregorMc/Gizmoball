@@ -10,10 +10,8 @@ import java.awt.event.KeyListener;
 
 import javax.swing.*;
 
-import controller.AbsorberKeyPressListener;
-import controller.FlipperListener;
+import controller.*;
 import model.Model;
-import controller.RunListener;
 
 /**
  * @author Murray Wood Demonstration of MVC and MIT Physics Collisions 2014
@@ -25,6 +23,7 @@ public class RunGui {
     private JFrame frame;
     private ActionListener listener;
     private KeyListener fl, al;
+    private KeyListener magicKeyListener, runKeyListener;
 
     private Board board;
     private Boolean runMode = false;
@@ -48,8 +47,10 @@ public class RunGui {
 
         // RunListener catches all GUI events. In reality might have many listeners.
         listener = new RunListener(model, this);
-        fl = new FlipperListener(model);
-        al = new AbsorberKeyPressListener(model);
+        runKeyListener = new RunKeyListener(model);
+        magicKeyListener = new MagicKeyListener(runKeyListener);
+
+
     }
 
     public void createAndShowGUI() {
@@ -63,8 +64,11 @@ public class RunGui {
 
         // Board is passed the Model so it can act as Observer
         board = new Board(500, 500, model, this);
-        board.addKeyListener(fl);
-        board.addKeyListener(al);
+
+        board.addKeyListener(magicKeyListener);
+
+        //board.addKeyListener(fl);
+        //board.addKeyListener(al);
 
         Container cp = frame.getContentPane();
 
