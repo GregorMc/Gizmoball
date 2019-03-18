@@ -24,6 +24,10 @@ public class LeftFlipper implements IGizmo, IFlipper{
     private String gizID;
     private final int L =25;
 
+    private List<IGizmo> trigGiz;
+
+
+
     public LeftFlipper(String id, double xpos1,double ypos1){
         this.gizID = id;
         this.x1 = xpos1;
@@ -31,6 +35,9 @@ public class LeftFlipper implements IGizmo, IFlipper{
         this.colour = Color.BLUE;
         this.angle = 0;
         this.TYPE = "LEFT";
+        this.activated = false;
+
+        this.trigGiz = new ArrayList<>();
     }
 
     public List<LineSegment> getLineSegments() {
@@ -65,6 +72,43 @@ public class LeftFlipper implements IGizmo, IFlipper{
     @Override
     public String getID() {
         return this.gizID;
+    }
+
+    @Override
+    public void performAction() {
+        if(activated){
+            this.activated = false;
+        } else {
+            this.activated = true;
+        }
+    }
+
+    @Override
+    public Color getGizColour() {
+        return colour;
+    }
+
+    @Override
+    public void addGizConnect(IGizmo giz) {
+        if(trigGiz.contains(giz)){
+            System.out.println("Connection already exists");
+        } else {
+            trigGiz.add(giz);
+        }
+    }
+
+    @Override
+    public void deleteGizConnect(IGizmo giz) {
+        if(trigGiz.contains(giz)){
+            trigGiz.remove(giz);
+        } else {
+            System.out.println("Connection doesn't exist");
+        }
+    }
+
+    @Override
+    public List<IGizmo> getGizConnections() {
+        return trigGiz;
     }
 
     public boolean isActivated(){

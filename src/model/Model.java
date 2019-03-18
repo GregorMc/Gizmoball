@@ -22,7 +22,6 @@ public class Model extends Observable {
     private final int L = 25;
     private final int MAXANGLE = 90;
     private final int MINANGLE = 0;
-    private boolean absorbCollision = false;
 
     private double gravity;
 
@@ -32,7 +31,7 @@ public class Model extends Observable {
     private double MU2;
 
     public Model(){
-        this.ball = new Ball("FB",1,1,100,100);
+        this.ball = new Ball("InitB",1,1,100,100);
         this.walls = new Walls(0,0,20,20);
 
         this.gizmos = new ArrayList<>();
@@ -56,22 +55,28 @@ public class Model extends Observable {
             if (tuc > moveTime) {
                 // No collision ...
                 ball = movelBallForTime(ball, moveTime);
-
-                applyGravity(moveTime);
-                applyFriction(moveTime);
-
             } else {
                 // We've got a collision in tuc
                 ball = movelBallForTime(ball, tuc);
                 if(cd.getHitGiz() instanceof Absorber){
                     prepareLaunch((Absorber)cd.getHitGiz());
                 }
-                applyGravity(tuc);
-                applyFriction(tuc);
+
+                //perform action on collision gizmo
+                cd.getHitGiz().performAction();
+
+                //get gizmos to trigger
+                List<IGizmo> connections = cd.getHitGiz().getGizConnections();
+
+                for(IGizmo giz: connections){
+                    giz.performAction();
+                }
                 // Post collision velocity ...
                 ball.setVelo(cd.getVelo());
             }
             // No satisficingtify observers ... redraw updated view
+            applyGravity(moveTime);
+            applyFriction(moveTime);
             this.setChanged();
             this.notifyObservers();
         }
@@ -93,13 +98,13 @@ public class Model extends Observable {
     public void prepareLaunch(Absorber absorber){
         ball.stop();
         ball.setExactX((absorber.getXpos2()-0.5)*25);
-        ball.setExactY((absorber.getYpos2()-0.75)*25);
+        ball.setExactY((absorber.getYpos2()-0.25)*25);
 
     }
 
     public void launchBall(){
         ball.setExactY(ball.getExactY()-(2*L));
-        setBallSpeed(ball.getVelo().x(), -50*L);
+        setBallSpeed(0, -50*L);
         ball.start();
     }
 
@@ -205,11 +210,12 @@ public class Model extends Observable {
                     fl.setAngle(fl.getAngle() - 5);
                 }
             }
-
             this.setChanged();
             this.notifyObservers();
         }
     }
+
+
 
 
     public void loadBoard() {
@@ -240,7 +246,9 @@ public class Model extends Observable {
                                     t.rotateTriangle();
                                     break;
                                 case "Connect":
-                                    System.out.println("Connect - Do nothing");
+                                    IGizmo produce = getGizmoByID(args[1]);
+                                    IGizmo consumer = getGizmoByID(args[2]);
+                                    produce.addGizConnect(consumer);
                                     break;
                                 case "Square":
                                     addGizmo(new Square(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3])));

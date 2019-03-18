@@ -14,9 +14,6 @@ import javax.swing.JPanel;
 import model.*;
 import physics.Circle;
 
-/**
- * @author Murray Wood Demonstration of MVC and MIT Physics Collisions 2014
- */
 
 public  class Board extends JPanel implements Observer {
 
@@ -57,50 +54,48 @@ public  class Board extends JPanel implements Observer {
                 g2.drawLine(0, i*hgtOfRw, width, i*hgtOfRw);
                 g2.drawLine(i*wdtOfRw, 0, i*wdtOfRw, height);
             }
-            g2.setColor(Color.black);
         }
 
         //FIXME Attempt to draw all gizmos
         for(IGizmo gizmo: gm.getGizmos()){
+            g2.setColor(gizmo.getGizColour());
             if(gizmo instanceof Triangle){
                 Triangle t = (Triangle)gizmo;
-                g2.drawPolygon(t.getXpos(),t.getYpos(),3);
+                g2.fillPolygon(t.getXpos(),t.getYpos(),3);
             } else if(gizmo instanceof  Square){
                 Square s = (Square)gizmo;
-                g2.drawRect(s.getXpos(),s.getYpos(), L, L);
+                g2.fillRect(s.getXpos(),s.getYpos(), L, L);
             } else if(gizmo instanceof CircleGiz){
                 CircleGiz c = (CircleGiz) gizmo;
                 Ellipse2D.Double circle = new Ellipse2D.Double(c.getXposinL(),c.getYposinL(), L, L);
-                g2.draw(circle);
+                g2.fill(circle);
             } else if (gizmo instanceof Absorber){
                 Absorber a = (Absorber) gizmo;
-                g2.drawRect(a.getXpos1InL(),a.getYpos1InL(),Math.abs(a.getXpos2InL()-a.getXpos1InL()),Math.abs(a.getYpos2InL()-a.getYpos1InL()));
+                g2.fillRect(a.getXpos1InL(),a.getYpos1InL(),Math.abs(a.getXpos2InL()-a.getXpos1InL()),Math.abs(a.getYpos2InL()-a.getYpos1InL()));
             } //FIXME draw flippers seperate
         }
 
-        g2.setColor(Color.RED);
 
         for(IFlipper fl: gm.getFlippers()){
             AffineTransform t = new AffineTransform();
-            RoundRectangle2D.Double flipper = new RoundRectangle2D.Double(fl.getXpos(),fl.getYpos(),12 ,2*L,12,12);  //TODO change width/height to make it a vertical/horizontal flipper
+            RoundRectangle2D.Double flipper = new RoundRectangle2D.Double(fl.getXpos(), fl.getYpos(), 12, 2 * L, 12, 12);  //TODO change width/height to make it a vertical/horizontal flipper
 
-            t.rotate(Math.toRadians(fl.getAngle()),fl.getXpos(),fl.getYpos());
+            t.rotate(Math.toRadians(fl.getAngle()), fl.getXpos(), fl.getYpos());
 
-            if(fl.getType().equals("LEFT")){
-                try {
-                    t.invert();
-                } catch (NoninvertibleTransformException e) {
-                    e.printStackTrace();
-                }
-            }
+                    if (fl.getType().equals("LEFT")) {
+
+                        try {
+                            t.invert();
+                        } catch (NoninvertibleTransformException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
             //some stuff to invert it
             Shape newFlipper = t.createTransformedShape(flipper);
             g2.fill(newFlipper);
+
         }
-
-
-
 
         Ball b = gm.getBall();
         if (b != null) {
@@ -110,13 +105,13 @@ public  class Board extends JPanel implements Observer {
             int width = (int) (2 * b.getRadius());
             g2.fillOval(x, y, width, width);
         }
-        this.requestFocus();
 
     }
 
     @Override
     public void update(Observable arg0, Object arg1) {
         repaint();
+        this.requestFocus();
     }
 
 }

@@ -16,7 +16,9 @@ public class Absorber implements IGizmo {
     private int ypos2;
     private LineSegment northLine;
     private String id;
-    public final Color colour = Color.PINK;
+    private Color colour;
+
+    private List<IGizmo> trigGiz;
 
     public Absorber(String gizid, int x1,int y1,int x2,int y2){
         this.northLine = new LineSegment((x1*L), (y1*L),(x2*L), (y1*L));
@@ -25,6 +27,9 @@ public class Absorber implements IGizmo {
         this.ypos1 = y1;
         this.xpos2 = x2;
         this.ypos2 = y2;
+        this.colour = Color.PINK;
+
+        this.trigGiz = new ArrayList<>();
     }
 
     public List<LineSegment> getLineSegments() {
@@ -67,6 +72,39 @@ public class Absorber implements IGizmo {
     @Override
     public String getID() {
         return id;
+    }
+
+    @Override
+    public void performAction() {
+        //do nothing - dead code rn - need to make
+    }
+
+    @Override
+    public Color getGizColour() {
+        return colour;
+    }
+
+    @Override
+    public void addGizConnect(IGizmo giz) {
+        if(trigGiz.contains(giz)){
+            System.out.println("Connection already exists");
+        } else {
+            trigGiz.add(giz);
+        }
+    }
+
+    @Override
+    public void deleteGizConnect(IGizmo giz) {
+        if(trigGiz.contains(giz)){
+            trigGiz.remove(giz);
+        } else {
+            System.out.println("Connection doesn't exist");
+        }
+    }
+
+    @Override
+    public List<IGizmo> getGizConnections() {
+        return trigGiz;
     }
 
 

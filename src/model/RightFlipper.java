@@ -2,6 +2,8 @@ package model;
 import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
+
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import physics.LineSegment;
 import java.util.Collections;
 import physics.Circle;
@@ -25,6 +27,8 @@ public class RightFlipper implements IGizmo, IFlipper{
     private double angle;
     private String gizID;
 
+    private List<IGizmo> trigGiz;
+
     public RightFlipper(String id, double xpos1,double ypos1){
         this.gizID = id;
         this.angle = 0;
@@ -32,6 +36,8 @@ public class RightFlipper implements IGizmo, IFlipper{
         this.y1 = ypos1;
         this.colour = Color.BLUE;
         this.TYPE = "RIGHT";
+
+        this.trigGiz = new ArrayList<>();
     }
 
 
@@ -66,6 +72,34 @@ public class RightFlipper implements IGizmo, IFlipper{
     @Override
     public String getID() {
         return gizID;
+    }
+
+    @Override
+    public void performAction() {
+        if(activated){
+            this.activated = false;
+        } else {
+            this.activated = true;
+        }
+    }
+
+    @Override
+    public Color getGizColour() {
+        return colour;
+    }
+
+    @Override
+    public void addGizConnect(IGizmo giz) {
+        if(trigGiz.contains(giz)){
+            System.out.println("Connection already exists");
+        } else {
+            trigGiz.add(giz);
+        }
+    }
+
+    @Override
+    public List<IGizmo> getGizConnections() {
+        return trigGiz;
     }
 
     public void setAngle(double angle){

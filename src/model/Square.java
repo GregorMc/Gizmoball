@@ -4,6 +4,7 @@ import physics.Circle;
 import physics.LineSegment;
 
 import javax.sound.sampled.Line;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +14,17 @@ public class Square implements IGizmo {
     private int ypos;
     private String gizid;
     private final int L =25;
+    private Color colour;
+
+    private List<IGizmo> trigGiz;
 
     public Square(String id, int x, int y) {
         this.gizid = id;
         this.xpos = x;
         this.ypos = y;
+        this.colour = Color.GREEN;
+
+        this.trigGiz = new ArrayList<>();
     }
 
     //Collision Methods
@@ -59,6 +66,43 @@ public class Square implements IGizmo {
     @Override
     public String getID() {
         return gizid;
+    }
+
+    @Override
+    public void performAction() {
+        if(colour == Color.GREEN){
+            colour = Color.BLUE;
+        } else {
+            colour = Color.GREEN;
+        }
+    }
+
+    @Override
+    public Color getGizColour() {
+        return colour;
+    }
+
+    @Override
+    public void addGizConnect(IGizmo giz) {
+        if(trigGiz.contains(giz)){
+            System.out.println("Connection already exists");
+        } else {
+            trigGiz.add(giz);
+        }
+    }
+
+    @Override
+    public void deleteGizConnect(IGizmo giz) {
+        if(trigGiz.contains(giz)){
+            trigGiz.remove(giz);
+        } else {
+            System.out.println("Connection doesn't exist");
+        }
+    }
+
+    @Override
+    public List<IGizmo> getGizConnections() {
+        return trigGiz;
     }
 
     //Getters and Setters

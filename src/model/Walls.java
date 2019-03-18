@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import physics.LineSegment;
 
@@ -16,6 +17,8 @@ public class Walls {
     private int xpos2;
     private final int L = 25;
 
+    private List<IGizmo> trigGiz;
+
     // Walls are the enclosing Rectangle - defined by top left corner and bottom
     // right
     public Walls(int x1, int y1, int x2, int y2) {
@@ -23,6 +26,28 @@ public class Walls {
         ypos1 = y1*L;
         xpos2 = x2*L;
         ypos2 = y2*L;
+
+        this.trigGiz = new ArrayList<>();
+    }
+
+    public void addGizConnect(IGizmo giz){
+        if(trigGiz.contains(giz)){
+            System.out.println("Connection already exists");
+        } else {
+            trigGiz.add(giz);
+        }
+    }
+
+    public void disconnectGiz(IGizmo giz){
+        if(trigGiz.contains(giz)){
+            trigGiz.remove(giz);
+        } else {
+            System.out.println("Connection doesn't exist");
+        }
+    }
+
+    public List<IGizmo> getTrigGiz(){
+        return trigGiz;
     }
 
     public ArrayList<LineSegment> getLineSegments() {

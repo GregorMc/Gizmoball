@@ -10,10 +10,8 @@ public class RunComps {
     private ActionListener listener;
     private KeyListener flipListener, absorbListener;
 
-    public RunComps(ActionListener l, KeyListener fl, KeyListener al){
+    public RunComps(ActionListener l){
         this.listener = l;
-        this.flipListener = fl;
-        this.absorbListener = al;
     }
 
     private Font gf = new Font("Arial", Font.BOLD, 12);

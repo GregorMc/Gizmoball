@@ -4,7 +4,9 @@ import physics.Circle;
 import physics.LineSegment;
 
 import javax.sound.sampled.Line;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Triangle implements IGizmo {
 
@@ -12,17 +14,26 @@ public class Triangle implements IGizmo {
     private int xpos;
     private final int L = 25;
     private String gizmoid;
+
     private Map<String,LineSegment> lineSegments;
     private Map<String,Circle> circles;
+    private List<IGizmo> trigGiz;
+
     private int rotationNum;
+    private Color colour;
 
     public Triangle(String id, int x, int y) {
+
+
+        this.trigGiz = new ArrayList<>();
+
         this.gizmoid = id;
         this.xpos = x;
         this.ypos = y;
         this.lineSegments = new HashMap<>();
         this.circles = new HashMap<>();
         this.rotationNum = 0;
+        this.colour = Color.red;
         updateLineSegments();
         updateCircles();
     }
@@ -157,6 +168,43 @@ public class Triangle implements IGizmo {
     @Override
     public String getID() {
         return gizmoid;
+    }
+
+    @Override
+    public void performAction() {
+        if(colour == Color.RED){
+            colour = Color.ORANGE;
+        } else {
+            colour = Color.RED;
+        }
+    }
+
+    @Override
+    public Color getGizColour() {
+        return colour;
+    }
+
+    @Override
+    public void addGizConnect(IGizmo giz) {
+        if(trigGiz.contains(giz)){
+            System.out.println("Connection already exists");
+        } else {
+            trigGiz.add(giz);
+        }
+    }
+
+    @Override
+    public void deleteGizConnect(IGizmo giz) {
+        if(trigGiz.contains(giz)){
+            trigGiz.remove(giz);
+        } else {
+            System.out.println("Connection doesn't exist");
+        }
+    }
+
+    @Override
+    public List<IGizmo> getGizConnections() {
+        return trigGiz;
     }
 
 
