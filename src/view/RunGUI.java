@@ -24,8 +24,9 @@ public class RunGui {
     private Board board;
     private Boolean runMode = false;
 
-    private JPanel buildButtons, runButtons, buttons;
+    private JPanel buildButtons, runButtons, buttons, textbox;
     private JMenuBar menuBar, runMenu, buildMenu;
+    private JLabel textLabel;
 
     public RunGui(Model m) {
 
@@ -38,6 +39,9 @@ public class RunGui {
         menuBar = new JMenuBar();
         runMenu = new JMenuBar();
         buildMenu = new JMenuBar();
+
+        this.textbox = new JPanel();
+        this.textLabel = new JLabel();
 
         board = new Board(500, 500, model, this);
 
@@ -52,7 +56,7 @@ public class RunGui {
     public void createAndShowGUI() {
 
         //Create build and run components
-        BuildComps makeBuildComp = new BuildComps(listener);
+        BuildComps makeBuildComp = new BuildComps(listener, model);
         RunComps makeRunComp = new RunComps(listener);
 
         frame = new JFrame("Gizmoball");
@@ -77,8 +81,12 @@ public class RunGui {
 
         buttons.add(buildButtons);
 
+        textLabel.setText("Welcome to Gizmoball");
+        textbox.add(textLabel);
+
         cp.add(buttons, BorderLayout.NORTH);
         cp.add(board, BorderLayout.CENTER);
+        cp.add(textbox, BorderLayout.SOUTH);
 
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -104,6 +112,8 @@ public class RunGui {
         runMode = true;
         model.setRunMode(runMode);
 
+        textLabel.setText("Welcome to run mode.");
+
         SwingUtilities.updateComponentTreeUI(frame); //Updates GUI after mode has changed; fixme - later on model needs to know
 
     }
@@ -123,6 +133,8 @@ public class RunGui {
 
         runMode = false;
         model.setRunMode(runMode);
+
+        textLabel.setText("Welcome to build mode.");
 
         SwingUtilities.updateComponentTreeUI(frame);
 

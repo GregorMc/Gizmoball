@@ -11,6 +11,7 @@ import java.util.Observer;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import controller.MouseEventListener;
 import model.*;
 import physics.Circle;
 
@@ -24,6 +25,8 @@ public  class Board extends JPanel implements Observer {
     //fixme Model is 20Lx20L and Board is difference coordinates - multiply by L to get pos on board & divide to get pos on model.
     protected final int L = 25;
 
+    private MouseEventListener ml;
+
     public Board(int w, int h, Model m, RunGui g) {
         // Observe changes in Model
         this.gui = g;
@@ -32,6 +35,8 @@ public  class Board extends JPanel implements Observer {
         height = h;
         gm = m;
         this.setBorder(BorderFactory.createLineBorder(Color.black));
+        this.ml = new MouseEventListener(gm);
+        this.addMouseListener(ml);
     }
 
     // Fix onscreen size
@@ -67,7 +72,7 @@ public  class Board extends JPanel implements Observer {
                 g2.fillRect(s.getXpos(),s.getYpos(), L, L);
             } else if(gizmo instanceof CircleGiz){
                 CircleGiz c = (CircleGiz) gizmo;
-                Ellipse2D.Double circle = new Ellipse2D.Double(c.getXposinL(),c.getYposinL(), L, L);
+                Ellipse2D.Double circle = new Ellipse2D.Double(c.getXPosinP(),c.getYPosinP(), L, L);
                 g2.fill(circle);
             } else if (gizmo instanceof Absorber){
                 Absorber a = (Absorber) gizmo;

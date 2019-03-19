@@ -10,9 +10,8 @@ import physics.Vect;
 
 public class LeftFlipper implements IGizmo, IFlipper{
 
-    private double x1;
-    private double x2;
-    private double y1;
+    private int x1;
+    private int y1;
     private double y2;
     private double movement;
     private boolean activated;
@@ -28,7 +27,7 @@ public class LeftFlipper implements IGizmo, IFlipper{
     private List<String> keyConnects;
 
 
-    public LeftFlipper(String id, double xpos1,double ypos1){
+    public LeftFlipper(String id, int xpos1,int ypos1){
         this.gizID = id;
         this.x1 = xpos1;
         this.y1 = ypos1;
@@ -43,8 +42,8 @@ public class LeftFlipper implements IGizmo, IFlipper{
 
     public List<LineSegment> getLineSegments() {
         List<LineSegment> lineSegments = new ArrayList<>();
-        LineSegment l1 = new LineSegment(x1+0.25, y1, x2+1.75, y1);
-        LineSegment l2 = new LineSegment(x2+0.25, y1+0.5, x2+1.75, y2+0.5);
+        LineSegment l1 = new LineSegment(x1+0.25, y1, y1+1.75, y1);
+        LineSegment l2 = new LineSegment(y1+0.25, y1+0.5, y1+1.75, y2+0.5);
         lineSegments.add(l1);
         lineSegments.add(l2);
         return lineSegments;
@@ -53,11 +52,11 @@ public class LeftFlipper implements IGizmo, IFlipper{
     public List<Circle> getCircles() {
         List<Circle> circles = new ArrayList<>();
         Circle tl =  new Circle(new Vect(x1,y1),0);
-        Circle tr = new Circle(new Vect(x2,y1), 0);
+        Circle tr = new Circle(new Vect(y1,y1), 0);
         Circle bl = new Circle(new Vect(x1,y2), 0);
-        Circle br = new Circle(new Vect(x2,y2),0);
+        Circle br = new Circle(new Vect(y1,y2),0);
         Circle top =  new Circle(new Vect(x1+0.25,y1),0.25);
-        Circle bottom = new Circle(new Vect(x2+1.75,y2+0.25),0.25);
+        Circle bottom = new Circle(new Vect(y1+1.75,y2+0.25),0.25);
         circles.add(tl);
         circles.add(tr);
         circles.add(bl);
@@ -123,6 +122,36 @@ public class LeftFlipper implements IGizmo, IFlipper{
         return keyConnects;
     }
 
+    @Override
+    public int getXposinL() {
+        return x1;
+    }
+
+    @Override
+    public int getYposinL() {
+        return y1;
+    }
+
+    @Override
+    public int getXPosinP() {
+        return x1*L;
+    }
+
+    @Override
+    public int getYPosinP() {
+        return y1*L;
+    }
+
+    @Override
+    public void setX(int x) {
+        this.x1 = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y1 = y;
+    }
+
     public boolean isActivated(){
         return activated;
     }
@@ -146,14 +175,6 @@ public class LeftFlipper implements IGizmo, IFlipper{
 
     public double getYpos() {
         return y1 * L;
-    }
-
-    public void setXpos(double x) {
-        x1 = x;
-    }
-
-    public void setYpos(double y) {
-        y1 = y;
     }
 
     public void setAngle(double a){

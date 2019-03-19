@@ -34,7 +34,10 @@ public class RunKeyListener implements KeyListener {
 //        }
         System.out.println("Key pressed");
         if(model.inRunMode()){
+            String command = "key"+"."+e.getKeyCode()+"."+"down";
             model.addKeyPress("key"+"."+e.getKeyCode()+"."+"down");
+            System.out.println("Key Press Added");
+            System.out.println(command);
         }
     }
 

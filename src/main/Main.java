@@ -28,6 +28,7 @@ public class Main {
         IGizmo T3 = (Triangle) temp;
         ((Triangle) T3).rotateTriangle();
 
+
         model.addGizmo(new Square("S02",0,2));
         model.addGizmo(new Square("S12",1,2));
         model.addGizmo(new Square("S22",2,2));
@@ -77,6 +78,22 @@ public class Main {
         model.addGizmo(new Triangle("T10",4,12));
 
         model.addKeyConnect("A","32","down");
+
+        T3.addGizConnect(model.getGizmoByID("S02"));
+        T3.addGizConnect(model.getGizmoByID("S12"));
+        T3.addGizConnect(model.getGizmoByID("S22"));
+        T3.addGizConnect(model.getGizmoByID("S32"));
+        T3.addGizConnect(model.getGizmoByID("S42"));
+        T3.addGizConnect(model.getGizmoByID("S52"));
+        T3.addGizConnect(model.getGizmoByID("S62"));
+        T3.addGizConnect(model.getGizmoByID("S72"));
+        T3.addGizConnect(model.getGizmoByID("S82"));
+        T3.addGizConnect(model.getGizmoByID("S132"));
+        T3.addGizConnect(model.getGizmoByID("S142"));
+        T3.addGizConnect(model.getGizmoByID("S152"));
+
+        int x = 5, y = 7;
+        System.out.println("s"+x+y);
 
         RunGui gui = new RunGui(model);
         gui.createAndShowGUI();

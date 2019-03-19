@@ -27,6 +27,12 @@ public class Model extends Observable {
 
     private Boolean runMode;
 
+    private String selectedGizmo;
+    private Boolean gizmoSelected;
+
+    private String selectedAction;
+    private Boolean actionSelected;
+
     private Ball ball;
     private Walls walls;
     private double MU;
@@ -40,27 +46,37 @@ public class Model extends Observable {
         this.flippers = new ArrayList<>();
         this.keyPresses = new LinkedList<>();
 
-        this.MU = 0.025/25;
-        this.MU2 = 0.025/25;
-        this.gravity = 25.0*18;
+        this.MU = 0.025/15;
+        this.MU2 = 0.025/15;
+        this.gravity = 25.0*19;
+
+        this.selectedGizmo = "";
+        this.selectedAction = "";
+        this.gizmoSelected = false;
+        this.actionSelected = false;
 
         this.runMode = false;
+    }
+
+    public void setGravity(double gravity) {
+        this.gravity = gravity*19;
     }
 
     public void moveBall(){
 
         double moveTime = 0.05; // 0.05 = 20 times per second as per Gizmoball
 
-        for(IGizmo gizmo: gizmos){
-            for(String command: keyPresses){
-                if(!gizmo.getKeyConnections().contains(command)){
+        for(String command: keyPresses){
+            for(IGizmo gizmo: gizmos){
+
+                List<String> keyConnections = gizmo.getKeyConnections();
+                if(!keyConnections.contains(command)){
                     continue;
                 }
 
-
                 if((gizmo instanceof Absorber) && ball.stopped()){
                     gizmo.performAction(this);
-                } else if(!(gizmo instanceof Absorber) && inRunMode() && !ball.stopped()) {
+                } else if(!(gizmo instanceof Absorber) && inRunMode() && ball.stopped()) {
                     gizmo.performAction(this);
                 }
                 keyPresses.remove(command);
@@ -84,7 +100,7 @@ public class Model extends Observable {
                 } else {
                     cd.getHitGiz().performAction(this);
                 }
-                System.out.println("got here");
+
                 //get gizmos to trigger
                 List<IGizmo> connections = cd.getHitGiz().getGizConnections();
 
@@ -190,6 +206,27 @@ public class Model extends Observable {
         gizmo.addKeyConnect(key, upDown);
     }
 
+    public void setSelectedAction(String selecAction){
+        this.selectedAction = selecAction;
+    }
+
+    public String getSelectedAction(){
+        return selectedAction;
+    }
+
+    public void setActionSelected(Boolean yesNo){
+        this.actionSelected = yesNo;
+    }
+
+    public Boolean getActionSelected(){
+        return actionSelected;
+    }
+
+    public void quickUpdate(){
+        this.setChanged();
+        this.notifyObservers();
+    }
+
     private Ball movelBallForTime(Ball ball, double time) {
 
         double newX = 0.0;
@@ -220,12 +257,14 @@ public class Model extends Observable {
             System.out.println("Flipper alreaday exists");
             return false;
         } else {
+            if(!gizmos.contains((IGizmo) flipper)){gizmos.add((IGizmo) flipper);}
             flippers.add(flipper);
             return true;
         }
     }
 
     public IGizmo getGizmoByID(String gizID){
+        System.out.println(gizID);
         for(IGizmo gizmo: gizmos){
             if(gizmo.getID().equals(gizID)) {
                 return gizmo;
@@ -233,6 +272,36 @@ public class Model extends Observable {
         }
         return new Square("SFake", -1,-1);
     }
+
+    public boolean isGizmoAtCoordinates(int x,int y){
+        boolean found = false;
+        for(IGizmo g: getGizmos()){
+            if(g.getXposinL() == x && g.getYposinL() == y){
+                found = true;
+            }
+        }
+        return found;
+    }
+
+    public IGizmo getGizmoAtCoordinates(int x, int y){
+        IGizmo found = null;
+        for(IGizmo g: getGizmos()){
+            if(g.getXposinL() == x && g.getYposinL() == y){
+                found = g;
+            }
+        }
+        return  found;
+    }
+
+    public void removeGizmo(IGizmo giz){
+        gizmos.removeIf(g -> g == giz);
+    }
+
+    public void removeFlipper(IFlipper flip){
+        flippers.removeIf(g -> g == flip);
+        gizmos.removeIf(g -> g == flip);
+    }
+
 
     public void moveFlippers() {
         for (IFlipper fl : flippers) {
@@ -250,8 +319,6 @@ public class Model extends Observable {
             this.notifyObservers();
         }
     }
-
-
 
 
     public void loadBoard() {
@@ -307,15 +374,6 @@ public class Model extends Observable {
                                     ball = new Ball(args[1], Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]), Double.parseDouble(args[5]));
                                     break;
                                 case "KeyConnect":
-                                    System.out.println("GIZID");
-                                    System.out.println(args[4]);
-                                    System.out.println("-------");
-                                    System.out.println("KEY NUM");
-                                    System.out.println(args[2]);
-                                    System.out.println("-------");
-                                    System.out.println("UP/DOWN");
-                                    System.out.println(args[3]);
-                                    System.out.println("-------");
                                     addKeyConnect(args[4],args[2],args[3]);
                                     break;
                                 default:
@@ -353,6 +411,13 @@ public class Model extends Observable {
         }
     }
 
+    public void setSelectedGizmo(String selectG){
+        this.selectedGizmo = selectG;
+    }
+
+    public String getSelectedGizmo(){
+        return selectedGizmo;
+    }
 
     public List<IGizmo> getGizmos() {
         return gizmos;
@@ -379,6 +444,14 @@ public class Model extends Observable {
 
     public double getMU() {
         return MU;
+    }
+
+    public void setGizmoSelected(Boolean selected){
+        this.gizmoSelected = selected;
+    }
+
+    public boolean getGizmoSelected(){
+        return gizmoSelected;
     }
 
     public double getMU2() {

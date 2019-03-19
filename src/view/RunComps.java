@@ -1,5 +1,7 @@
 package view;
 
+import controller.PhysicsListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -7,8 +9,8 @@ import java.awt.event.KeyListener;
 
 public class RunComps {
 
-    private ActionListener listener;
-    private KeyListener flipListener, absorbListener;
+    private ActionListener listener, physicsList;
+
 
     public RunComps(ActionListener l){
         this.listener = l;
@@ -40,9 +42,6 @@ public class RunComps {
         JButton button1 = new JButton("Start");
         button1.setFont(gf);
         button1.addActionListener(listener);
-        button1.addKeyListener(flipListener);
-        button1.addKeyListener(absorbListener);
-
         button1.setMaximumSize(new Dimension(100, 300));
         runButtons.add(button1);
 

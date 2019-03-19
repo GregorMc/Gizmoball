@@ -113,6 +113,9 @@ public class Absorber implements IGizmo {
             System.out.println("Connection already exists");
         } else {
             keyConnects.add(input);
+            System.out.println("Connection added in Absorber");
+            System.out.println(input);
+            System.out.println("------------");
         }
     }
 
@@ -121,6 +124,35 @@ public class Absorber implements IGizmo {
         return keyConnects;
     }
 
+    @Override
+    public int getXposinL() {
+        return xpos1;
+    }
+
+    @Override
+    public int getYposinL() {
+        return ypos1;
+    }
+
+    @Override
+    public int getXPosinP() {
+        return xpos1*L;
+    }
+
+    @Override
+    public int getYPosinP() {
+        return ypos1*L;
+    }
+
+    @Override
+    public void setX(int x) {
+        //ignore
+    }
+
+    @Override
+    public void setY(int y) {
+        //ignore
+    }
 
     public int getXpos1InL(){ return (xpos1*L); }
 

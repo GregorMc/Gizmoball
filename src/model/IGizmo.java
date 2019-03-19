@@ -21,6 +21,14 @@ public interface IGizmo {
 
     void addKeyConnect(String key, String upDown);
     List<String> getKeyConnections();
+
+    int getXposinL();
+    int getYposinL();
+    int getXPosinP();
+    int getYPosinP();
+
+    void setX(int x);
+    void setY(int y);
     //void keyDisconnect(String key); //FIXME Might have to change
 
 }

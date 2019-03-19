@@ -122,6 +122,36 @@ public class Square implements IGizmo {
         return keyConnects;
     }
 
+    @Override
+    public int getXposinL() {
+        return xpos;
+    }
+
+    @Override
+    public int getYposinL() {
+        return ypos;
+    }
+
+    @Override
+    public int getXPosinP() {
+        return xpos*L;
+    }
+
+    @Override
+    public int getYPosinP() {
+        return ypos*L;
+    }
+
+    @Override
+    public void setX(int x) {
+        this.xpos = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.ypos = y;
+    }
+
     //Getters and Setters
     public int getXpos(){
         return xpos*L;

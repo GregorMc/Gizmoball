@@ -13,10 +13,9 @@ import physics.Vect;
 
 public class RightFlipper implements IGizmo, IFlipper{
 
-    private double x1;
-    private double x2;
-    private double y1;
-    private double y2;
+    private int x1;
+    private int y1;
+
     private final int L =25;
 
     private final String TYPE;
@@ -30,10 +29,10 @@ public class RightFlipper implements IGizmo, IFlipper{
     private List<IGizmo> trigGiz;
     private List<String> keyConnects;
 
-    public RightFlipper(String id, double xpos1,double ypos1){
+    public RightFlipper(String id, int xpos1,int ypos1){
         this.gizID = id;
         this.angle = 0;
-        this.x1 = xpos1 + 1.5;
+        this.x1 = xpos1 + 2;
         this.y1 = ypos1;
         this.colour = Color.BLUE;
         this.TYPE = "RIGHT";
@@ -46,8 +45,8 @@ public class RightFlipper implements IGizmo, IFlipper{
     public List<LineSegment> getLineSegments() {
 
         List<LineSegment> lineSegments = new ArrayList<>();
-        LineSegment l1 = new LineSegment(x1, y1, x2, y1);
-        LineSegment l2 = new LineSegment(x2, y1, x2, y2);
+        LineSegment l1 = new LineSegment(x1, y1, y1, y1);
+        LineSegment l2 = new LineSegment(y1, y1, y1, y1);
         lineSegments.add(l1);
         lineSegments.add(l2);
         return lineSegments;
@@ -56,11 +55,11 @@ public class RightFlipper implements IGizmo, IFlipper{
     public List<Circle> getCircles() {
         List<Circle> circles = new ArrayList<>();
         Circle tl =  new Circle(new Vect(x1,y1),0);
-        Circle tr = new Circle(new Vect(x2,y1), 0);
-        Circle bl = new Circle(new Vect(x1,y2), 0);
-        Circle br = new Circle(new Vect(x2,y2),0);
+        Circle tr = new Circle(new Vect(y1,y1), 0);
+        Circle bl = new Circle(new Vect(x1,y1), 0);
+        Circle br = new Circle(new Vect(y1,y1),0);
         Circle top =  new Circle(new Vect(x1+0.25,y1),0.25);
-        Circle bottom = new Circle(new Vect(x2+1.75,y2+0.25),0.25);
+        Circle bottom = new Circle(new Vect(y1+1.75,y1+0.25),0.25);
         circles.add(tl);
         circles.add(tr);
         circles.add(bl);
@@ -123,6 +122,26 @@ public class RightFlipper implements IGizmo, IFlipper{
         return keyConnects;
     }
 
+    @Override
+    public int getXposinL() {
+        return x1;
+    }
+
+    @Override
+    public int getYposinL() {
+       return y1;
+    }
+
+    @Override
+    public int getXPosinP() {
+        return x1*L;
+    }
+
+    @Override
+    public int getYPosinP() {
+        return y1*L;
+    }
+
     public void setAngle(double angle){
         this.angle = angle;
     }
@@ -169,6 +188,15 @@ public class RightFlipper implements IGizmo, IFlipper{
         return y1 * L;
     }
 
+    @Override
+    public void setX(int x) {
+        this.x1 = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y1 = y;
+    }
 
     public void setColour(Color colour){
         this.colour = colour;
@@ -179,13 +207,6 @@ public class RightFlipper implements IGizmo, IFlipper{
         return TYPE;
     }
 
-    public void setXpos(double x) {
-        x1 = x;
-    }
-
-    public void setYpos(double y) {
-        y1 = y;
-    }
 
 
 }
