@@ -28,6 +28,7 @@ public class RightFlipper implements IGizmo, IFlipper{
     private String gizID;
 
     private List<IGizmo> trigGiz;
+    private List<String> keyConnects;
 
     public RightFlipper(String id, double xpos1,double ypos1){
         this.gizID = id;
@@ -38,6 +39,7 @@ public class RightFlipper implements IGizmo, IFlipper{
         this.TYPE = "RIGHT";
 
         this.trigGiz = new ArrayList<>();
+        this.keyConnects = new ArrayList<>();
     }
 
 
@@ -75,12 +77,7 @@ public class RightFlipper implements IGizmo, IFlipper{
     }
 
     @Override
-    public void performAction() {
-        if(activated){
-            this.activated = false;
-        } else {
-            this.activated = true;
-        }
+    public void performAction(Model model) {
     }
 
     @Override
@@ -98,8 +95,32 @@ public class RightFlipper implements IGizmo, IFlipper{
     }
 
     @Override
+    public void deleteGizConnect(IGizmo giz) {
+        if(!trigGiz.contains(giz)){
+            System.out.println("Connection does not exist");
+        } else {
+            trigGiz.remove(giz);
+        }
+    }
+
+    @Override
     public List<IGizmo> getGizConnections() {
         return trigGiz;
+    }
+
+    @Override
+    public void addKeyConnect(String key, String upDown) {
+        String input = "key" + "." + key + "." + upDown;
+        if(keyConnects.contains(input)){
+            System.out.println("Connection already exists");
+        } else {
+            keyConnects.add(input);
+        }
+    }
+
+    @Override
+    public List<String> getKeyConnections() {
+        return keyConnects;
     }
 
     public void setAngle(double angle){

@@ -18,6 +18,8 @@ public class Triangle implements IGizmo {
     private Map<String,LineSegment> lineSegments;
     private Map<String,Circle> circles;
     private List<IGizmo> trigGiz;
+    private List<String> keyConnects;
+
 
     private int rotationNum;
     private Color colour;
@@ -26,6 +28,7 @@ public class Triangle implements IGizmo {
 
 
         this.trigGiz = new ArrayList<>();
+        this.keyConnects = new ArrayList<>();
 
         this.gizmoid = id;
         this.xpos = x;
@@ -51,9 +54,6 @@ public class Triangle implements IGizmo {
         }
     }
 
-    public int getRotationNum(){
-        return rotationNum;
-    }
 
     private void updateCircles(){
         switch (rotationNum){
@@ -171,7 +171,7 @@ public class Triangle implements IGizmo {
     }
 
     @Override
-    public void performAction() {
+    public void performAction(Model model) {
         if(colour == Color.RED){
             colour = Color.ORANGE;
         } else {
@@ -205,6 +205,21 @@ public class Triangle implements IGizmo {
     @Override
     public List<IGizmo> getGizConnections() {
         return trigGiz;
+    }
+
+    @Override
+    public void addKeyConnect(String key, String upDown) {
+        String input = "key" + "." + key + "." + upDown;
+        if(keyConnects.contains(input)){
+            System.out.println("Connection already exists");
+        } else {
+            keyConnects.add(input);
+        }
+    }
+
+    @Override
+    public List<String> getKeyConnections() {
+        return keyConnects;
     }
 
 

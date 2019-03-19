@@ -33,27 +33,17 @@ public class RunKeyListener implements KeyListener {
 //            }
 //        }
         System.out.println("Key pressed");
-        if(e.getKeyCode() == KeyEvent.VK_SPACE){
-            System.out.println("--------------");
-            System.out.println("Absorber Launch Key pressed");
-            if(model.getBall().stopped()) {
-                model.launchBall();
-            }
+        if(model.inRunMode()){
+            model.addKeyPress("key"+"."+e.getKeyCode()+"."+"down");
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
 
-//        System.out.println("Key Released");
-//        if(e.getKeyCode() == KeyEvent.VK_Z){
-//            System.out.println("-----------------");
-//            System.out.println("Flipper Key Released");
-//            for(IFlipper f1: model.getFlippers()){
-//                if(f1.isActivated()) {
-//                    f1.setActive(false);
-//                }
-//            }
-//        }
+        System.out.println("Key Released");
+        if(model.inRunMode()){
+            model.addKeyPress("key"+"."+e.getKeyCode()+"."+"up");
+        }
     }
 }

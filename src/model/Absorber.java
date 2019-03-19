@@ -19,6 +19,7 @@ public class Absorber implements IGizmo {
     private Color colour;
 
     private List<IGizmo> trigGiz;
+    private List<String> keyConnects;
 
     public Absorber(String gizid, int x1,int y1,int x2,int y2){
         this.northLine = new LineSegment((x1*L), (y1*L),(x2*L), (y1*L));
@@ -30,6 +31,7 @@ public class Absorber implements IGizmo {
         this.colour = Color.PINK;
 
         this.trigGiz = new ArrayList<>();
+        this.keyConnects = new ArrayList<>();
     }
 
     public List<LineSegment> getLineSegments() {
@@ -48,9 +50,6 @@ public class Absorber implements IGizmo {
         return lineSegments;
     }
 
-    public LineSegment getNorthLine() {
-        return northLine;
-    }
 
     public List<Circle> getCircles() {
         List<Circle> circles = new ArrayList<>();
@@ -75,8 +74,8 @@ public class Absorber implements IGizmo {
     }
 
     @Override
-    public void performAction() {
-        //do nothing - dead code rn - need to make
+    public void performAction(Model model) {
+        model.launchBall();
     }
 
     @Override
@@ -105,6 +104,21 @@ public class Absorber implements IGizmo {
     @Override
     public List<IGizmo> getGizConnections() {
         return trigGiz;
+    }
+
+    @Override
+    public void addKeyConnect(String key, String upDown) {
+        String input = "key" + "." + key + "." + upDown;
+        if(keyConnects.contains(input)){
+            System.out.println("Connection already exists");
+        } else {
+            keyConnects.add(input);
+        }
+    }
+
+    @Override
+    public List<String> getKeyConnections() {
+        return keyConnects;
     }
 
 

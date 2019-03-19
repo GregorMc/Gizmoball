@@ -27,7 +27,6 @@ public class RunListener implements ActionListener {
 
         if (e.getSource() == timer) {
             model.moveBall();
-            model.moveFlippers();
         } else
             switch (e.getActionCommand()) {
                 case "Start":

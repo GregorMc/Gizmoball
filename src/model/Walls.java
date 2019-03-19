@@ -18,6 +18,7 @@ public class Walls {
     private final int L = 25;
 
     private List<IGizmo> trigGiz;
+    private List<String> keyConnects;
 
     // Walls are the enclosing Rectangle - defined by top left corner and bottom
     // right
@@ -28,6 +29,7 @@ public class Walls {
         ypos2 = y2*L;
 
         this.trigGiz = new ArrayList<>();
+        this.trigGiz = new ArrayList<>();
     }
 
     public void addGizConnect(IGizmo giz){
@@ -35,6 +37,15 @@ public class Walls {
             System.out.println("Connection already exists");
         } else {
             trigGiz.add(giz);
+        }
+    }
+
+    public void addGizConnect(String key, String upDown){
+        String input = "key" + "." + key + "." + upDown;
+        if(keyConnects.contains(input)){
+            System.out.println("Connection already exists");
+        } else {
+            keyConnects.add(input);
         }
     }
 

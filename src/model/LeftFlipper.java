@@ -25,7 +25,7 @@ public class LeftFlipper implements IGizmo, IFlipper{
     private final int L =25;
 
     private List<IGizmo> trigGiz;
-
+    private List<String> keyConnects;
 
 
     public LeftFlipper(String id, double xpos1,double ypos1){
@@ -38,6 +38,7 @@ public class LeftFlipper implements IGizmo, IFlipper{
         this.activated = false;
 
         this.trigGiz = new ArrayList<>();
+        this.keyConnects = new ArrayList<>();
     }
 
     public List<LineSegment> getLineSegments() {
@@ -75,12 +76,8 @@ public class LeftFlipper implements IGizmo, IFlipper{
     }
 
     @Override
-    public void performAction() {
-        if(activated){
-            this.activated = false;
-        } else {
-            this.activated = true;
-        }
+    public void performAction(Model model) {
+
     }
 
     @Override
@@ -109,6 +106,21 @@ public class LeftFlipper implements IGizmo, IFlipper{
     @Override
     public List<IGizmo> getGizConnections() {
         return trigGiz;
+    }
+
+    @Override
+    public void addKeyConnect(String key, String upDown) {
+        String input = "key" + "." + key + "." + upDown;
+        if(keyConnects.contains(input)){
+            System.out.println("Connection already exists");
+        } else {
+            keyConnects.add(input);
+        }
+    }
+
+    @Override
+    public List<String> getKeyConnections() {
+        return keyConnects;
     }
 
     public boolean isActivated(){

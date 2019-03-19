@@ -17,6 +17,7 @@ public class CircleGiz implements IGizmo {
     private Color colour;
 
     private List<IGizmo> trigGiz;
+    private List<String> keyConnects;
 
     public CircleGiz(String id, int x, int y) {
         this.gizid = id;
@@ -25,6 +26,7 @@ public class CircleGiz implements IGizmo {
         this.colour = Color.ORANGE;
 
         this.trigGiz = new ArrayList<>();
+        this.keyConnects = new ArrayList<>();
     }
 
 
@@ -34,7 +36,7 @@ public class CircleGiz implements IGizmo {
     }
 
     @Override
-    public void performAction() {
+    public void performAction(Model model) {
         if(colour == Color.ORANGE){
             colour = Color.YELLOW;
         } else {
@@ -68,6 +70,21 @@ public class CircleGiz implements IGizmo {
     @Override
     public List<IGizmo> getGizConnections() {
         return trigGiz;
+    }
+
+    @Override
+    public void addKeyConnect(String key, String upDown) {
+        String input = "key" + "." + key + "." + upDown;
+        if(keyConnects.contains(input)){
+            System.out.println("Connection already exists");
+        } else {
+            keyConnects.add(input);
+        }
+    }
+
+    @Override
+    public List<String> getKeyConnections() {
+        return keyConnects;
     }
 
     public int getXposinL(){

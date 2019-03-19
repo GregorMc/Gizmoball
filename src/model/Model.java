@@ -10,20 +10,22 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
 public class Model extends Observable {
 
     private List<IGizmo> gizmos;
     private List<IFlipper> flippers;
 
+    private Queue<String> keyPresses;
+
     private final int L = 25;
     private final int MAXANGLE = 90;
     private final int MINANGLE = 0;
 
     private double gravity;
+
+    private Boolean runMode;
 
     private Ball ball;
     private Walls walls;
@@ -36,17 +38,34 @@ public class Model extends Observable {
 
         this.gizmos = new ArrayList<>();
         this.flippers = new ArrayList<>();
-
+        this.keyPresses = new LinkedList<>();
 
         this.MU = 0.025/25;
         this.MU2 = 0.025/25;
-        this.gravity = 25.0*20;
+        this.gravity = 25.0*18;
+
+        this.runMode = false;
     }
 
     public void moveBall(){
 
         double moveTime = 0.05; // 0.05 = 20 times per second as per Gizmoball
 
+        for(IGizmo gizmo: gizmos){
+            for(String command: keyPresses){
+                if(!gizmo.getKeyConnections().contains(command)){
+                    continue;
+                }
+
+
+                if((gizmo instanceof Absorber) && ball.stopped()){
+                    gizmo.performAction(this);
+                } else if(!(gizmo instanceof Absorber) && inRunMode() && !ball.stopped()) {
+                    gizmo.performAction(this);
+                }
+                keyPresses.remove(command);
+            }
+        }
 
         if (ball != null && !ball.stopped()) {
 
@@ -58,18 +77,19 @@ public class Model extends Observable {
             } else {
                 // We've got a collision in tuc
                 ball = movelBallForTime(ball, tuc);
+
+                //If collision with absorber, launch ball
                 if(cd.getHitGiz() instanceof Absorber){
                     prepareLaunch((Absorber)cd.getHitGiz());
+                } else {
+                    cd.getHitGiz().performAction(this);
                 }
-
-                //perform action on collision gizmo
-                cd.getHitGiz().performAction();
-
+                System.out.println("got here");
                 //get gizmos to trigger
                 List<IGizmo> connections = cd.getHitGiz().getGizConnections();
 
                 for(IGizmo giz: connections){
-                    giz.performAction();
+                    giz.performAction(this);
                 }
                 // Post collision velocity ...
                 ball.setVelo(cd.getVelo());
@@ -77,12 +97,22 @@ public class Model extends Observable {
             // No satisficingtify observers ... redraw updated view
             applyGravity(moveTime);
             applyFriction(moveTime);
+
             this.setChanged();
             this.notifyObservers();
         }
 
     }
 
+    public void addKeyPress(String command){
+
+            if(keyPresses.contains(command)){
+                System.out.println("command already exists");
+
+            } else {
+                keyPresses.add(command);
+            }
+    }
 
     public void applyGravity(double time){
         double yafter = ball.getVelo().y() + gravity * time;
@@ -99,10 +129,11 @@ public class Model extends Observable {
         ball.stop();
         ball.setExactX((absorber.getXpos2()-0.5)*25);
         ball.setExactY((absorber.getYpos2()-0.25)*25);
-
+        System.out.println("launch prepared");
     }
 
     public void launchBall(){
+        System.out.println("launching");
         ball.setExactY(ball.getExactY()-(2*L));
         setBallSpeed(0, -50*L);
         ball.start();
@@ -152,6 +183,11 @@ public class Model extends Observable {
 
         }
         return new CollisionDetails(shortestTime,newVelo, collisionGiz);
+    }
+
+    public void addKeyConnect(String gizID, String key, String upDown){
+        IGizmo gizmo = getGizmoByID(gizID);
+        gizmo.addKeyConnect(key, upDown);
     }
 
     private Ball movelBallForTime(Ball ball, double time) {
@@ -220,7 +256,9 @@ public class Model extends Observable {
 
     public void loadBoard() {
         gizmos.clear();
-
+        flippers.clear();
+        keyPresses.clear();
+        //FIXME Have to refresh keyConnections ??
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Open");
         int returnVal = fc.showOpenDialog(null);
@@ -269,7 +307,17 @@ public class Model extends Observable {
                                     ball = new Ball(args[1], Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]), Double.parseDouble(args[5]));
                                     break;
                                 case "KeyConnect":
-                                    System.out.println("Key Connect - Do nothing");
+                                    System.out.println("GIZID");
+                                    System.out.println(args[4]);
+                                    System.out.println("-------");
+                                    System.out.println("KEY NUM");
+                                    System.out.println(args[2]);
+                                    System.out.println("-------");
+                                    System.out.println("UP/DOWN");
+                                    System.out.println(args[3]);
+                                    System.out.println("-------");
+                                    addKeyConnect(args[4],args[2],args[3]);
+                                    break;
                                 default:
                                     System.out.println("Failed to load line:\n" + line);
                                     break;
@@ -289,6 +337,23 @@ public class Model extends Observable {
     }
 
     //Getters and Setters.
+    public boolean inRunMode(){
+        if (runMode){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void setRunMode(Boolean inRun){
+        if(inRun){
+            this.runMode = true;
+        } else {
+            this.runMode = false;
+        }
+    }
+
+
     public List<IGizmo> getGizmos() {
         return gizmos;
     }

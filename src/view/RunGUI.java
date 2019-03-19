@@ -13,16 +13,12 @@ import javax.swing.*;
 import controller.*;
 import model.Model;
 
-/**
- * @author Murray Wood Demonstration of MVC and MIT Physics Collisions 2014
- */
 
 public class RunGui {
 
     private Model model;
     private JFrame frame;
     private ActionListener listener;
-    private KeyListener fl, al;
     private KeyListener magicKeyListener, runKeyListener;
 
     private Board board;
@@ -57,7 +53,7 @@ public class RunGui {
 
         //Create build and run components
         BuildComps makeBuildComp = new BuildComps(listener);
-        RunComps makeRunComp = new RunComps(listener, fl, al);
+        RunComps makeRunComp = new RunComps(listener);
 
         frame = new JFrame("Gizmoball");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,6 +102,8 @@ public class RunGui {
 
 
         runMode = true;
+        model.setRunMode(runMode);
+
         SwingUtilities.updateComponentTreeUI(frame); //Updates GUI after mode has changed; fixme - later on model needs to know
 
     }
@@ -124,6 +122,8 @@ public class RunGui {
         buttons.setVisible(true);
 
         runMode = false;
+        model.setRunMode(runMode);
+
         SwingUtilities.updateComponentTreeUI(frame);
 
     }

@@ -17,6 +17,7 @@ public class Square implements IGizmo {
     private Color colour;
 
     private List<IGizmo> trigGiz;
+    private List<String> keyConnects;
 
     public Square(String id, int x, int y) {
         this.gizid = id;
@@ -25,6 +26,7 @@ public class Square implements IGizmo {
         this.colour = Color.GREEN;
 
         this.trigGiz = new ArrayList<>();
+        this.keyConnects = new ArrayList<>();
     }
 
     //Collision Methods
@@ -69,7 +71,7 @@ public class Square implements IGizmo {
     }
 
     @Override
-    public void performAction() {
+    public void performAction(Model model) {
         if(colour == Color.GREEN){
             colour = Color.BLUE;
         } else {
@@ -103,6 +105,21 @@ public class Square implements IGizmo {
     @Override
     public List<IGizmo> getGizConnections() {
         return trigGiz;
+    }
+
+    @Override
+    public void addKeyConnect(String key, String upDown) {
+        String input = "key" + "." + key + "." + upDown;
+        if(keyConnects.contains(input)){
+            System.out.println("Connection already exists");
+        } else {
+            keyConnects.add(input);
+        }
+    }
+
+    @Override
+    public List<String> getKeyConnections() {
+        return keyConnects;
     }
 
     //Getters and Setters
