@@ -218,6 +218,15 @@ public class Triangle implements IGizmo {
     }
 
     @Override
+    public void removeKeyConnect(String command) {
+        if(keyConnects.contains(command)){
+            keyConnects.remove(command);
+        } else {
+            System.out.println("connection doesnt exist");
+        }
+    }
+
+    @Override
     public List<String> getKeyConnections() {
         return keyConnects;
     }

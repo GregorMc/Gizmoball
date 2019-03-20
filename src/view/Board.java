@@ -34,8 +34,9 @@ public  class Board extends JPanel implements Observer {
         width = w;
         height = h;
         gm = m;
+        this.setBackground(Color.DARK_GRAY);
         this.setBorder(BorderFactory.createLineBorder(Color.black));
-        this.ml = new MouseEventListener(gm);
+        this.ml = new MouseEventListener(gm, gui);
         this.addMouseListener(ml);
     }
 
@@ -55,7 +56,7 @@ public  class Board extends JPanel implements Observer {
             int hgtOfRw = height/20, wdtOfRw = width/20;
             for(int i=0; i<20; i++){
                 g2.setStroke(new BasicStroke(2f));
-                g2.setColor(Color.PINK);
+                g2.setColor(Color.BLACK);
                 g2.drawLine(0, i*hgtOfRw, width, i*hgtOfRw);
                 g2.drawLine(i*wdtOfRw, 0, i*wdtOfRw, height);
             }
@@ -98,6 +99,11 @@ public  class Board extends JPanel implements Observer {
 
             //some stuff to invert it
             Shape newFlipper = t.createTransformedShape(flipper);
+
+
+            IGizmo colFlip = (IGizmo) fl;
+
+            g2.setColor(colFlip.getGizColour());
             g2.fill(newFlipper);
 
         }
@@ -110,7 +116,7 @@ public  class Board extends JPanel implements Observer {
             int width = (int) (2 * b.getRadius());
             g2.fillOval(x, y, width, width);
         }
-
+        this.requestFocus();
     }
 
     @Override

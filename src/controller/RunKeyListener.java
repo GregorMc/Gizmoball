@@ -38,6 +38,12 @@ public class RunKeyListener implements KeyListener {
             model.addKeyPress("key"+"."+e.getKeyCode()+"."+"down");
             System.out.println("Key Press Added");
             System.out.println(command);
+        } else  if(model.getConnectionSelected() && model.needKeyCode()){
+            if(model.getSelectedConnection().equals("KeyConnect Gizmo") || model.getSelectedConnection().equals("Remove KeyConnect")) {
+                model.setLastKeyCode(e.getKeyCode());
+                System.out.println("set last key code to: " + e.getKeyCode());
+                model.quickUpdate();
+            }
         }
     }
 

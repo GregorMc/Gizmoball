@@ -2,7 +2,8 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.Timer;
+import javax.swing.*;
+
 import model.Model;
 import view.RunGui;
 
@@ -30,7 +31,9 @@ public class RunListener implements ActionListener {
         } else
             switch (e.getActionCommand()) {
                 case "Start":
+                    model.quickUpdate();
                     timer.start();
+                    System.out.println("Timer started");
                     break;
                 case "Stop":
                     timer.stop();
@@ -43,13 +46,18 @@ public class RunListener implements ActionListener {
                     break;
                 case "Run Mode":
                     System.out.println("Run Mode Clicked");
+                    model.setGizmoSelected(false);
+                    model.setActionSelected(false);
+                    model.setConnectionSelected(false);
                     GUI.switchToRun();
                     break;
                 case "Build Mode":
                     timer.stop();
-                    System.out.println("Run Mode Clicked");
+                    System.out.println("Build Mode Clicked");
                     GUI.switchToBuild();
                     break;
+                case "Quit":
+                    System.exit(0);
             }
     }
 }

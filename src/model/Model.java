@@ -33,10 +33,18 @@ public class Model extends Observable {
     private String selectedAction;
     private Boolean actionSelected;
 
+    private String selectedConnection;
+    private Boolean connectionSelected;
+
+    private Boolean needKeyCode;
+    private int lastKeyCode = 0;
+
     private Ball ball;
     private Walls walls;
     private double MU;
     private double MU2;
+
+    private File file = new File("");
 
     public Model(){
         this.ball = new Ball("InitB",1,1,100,100);
@@ -52,8 +60,12 @@ public class Model extends Observable {
 
         this.selectedGizmo = "";
         this.selectedAction = "";
+        this.selectedConnection = "";
+
+        this.connectionSelected = false;
         this.gizmoSelected = false;
         this.actionSelected = false;
+        this.needKeyCode = false;
 
         this.runMode = false;
     }
@@ -66,9 +78,9 @@ public class Model extends Observable {
 
         double moveTime = 0.05; // 0.05 = 20 times per second as per Gizmoball
 
+
         for(String command: keyPresses){
             for(IGizmo gizmo: gizmos){
-
                 List<String> keyConnections = gizmo.getKeyConnections();
                 if(!keyConnections.contains(command)){
                     continue;
@@ -76,12 +88,14 @@ public class Model extends Observable {
 
                 if((gizmo instanceof Absorber) && ball.stopped()){
                     gizmo.performAction(this);
-                } else if(!(gizmo instanceof Absorber) && inRunMode() && ball.stopped()) {
+                } else if(!(gizmo instanceof Absorber) && inRunMode()) {
                     gizmo.performAction(this);
                 }
                 keyPresses.remove(command);
             }
         }
+
+
 
         if (ball != null && !ball.stopped()) {
 
@@ -201,6 +215,22 @@ public class Model extends Observable {
         return new CollisionDetails(shortestTime,newVelo, collisionGiz);
     }
 
+    public Boolean needKeyCode(){
+        return this.needKeyCode;
+    }
+
+    public void setNeedKeyCode(Boolean yesNo) {
+        this.needKeyCode = yesNo;
+    }
+
+    public void setLastKeyCode(int keyCode){
+        this.lastKeyCode = keyCode;
+    }
+
+    public int getLastKeyCode(){
+        return this.lastKeyCode;
+    }
+
     public void addKeyConnect(String gizID, String key, String upDown){
         IGizmo gizmo = getGizmoByID(gizID);
         gizmo.addKeyConnect(key, upDown);
@@ -220,6 +250,22 @@ public class Model extends Observable {
 
     public Boolean getActionSelected(){
         return actionSelected;
+    }
+
+    public Boolean getConnectionSelected() {
+        return connectionSelected;
+    }
+
+    public void setConnectionSelected(Boolean yesNo){
+        this.connectionSelected = yesNo;
+    }
+
+    public String getSelectedConnection(){
+        return selectedConnection;
+    }
+
+    public void setSelectedConnection(String selectedConnection) {
+        this.selectedConnection = selectedConnection;
     }
 
     public void quickUpdate(){
@@ -295,11 +341,13 @@ public class Model extends Observable {
 
     public void removeGizmo(IGizmo giz){
         gizmos.removeIf(g -> g == giz);
+        quickUpdate();
     }
 
     public void removeFlipper(IFlipper flip){
         flippers.removeIf(g -> g == flip);
         gizmos.removeIf(g -> g == flip);
+        quickUpdate();
     }
 
 
@@ -332,7 +380,7 @@ public class Model extends Observable {
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             if (fc.getSelectedFile().isFile()) {
-                File file = fc.getSelectedFile();
+                file = fc.getSelectedFile();
                 try {
                     FileReader fileReader = new FileReader(file);
                     BufferedReader bufferedReader = new BufferedReader(fileReader);

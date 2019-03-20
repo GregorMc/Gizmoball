@@ -1,9 +1,6 @@
 package view;
 
-import controller.EditGizmoListener;
-import controller.PhysicsListener;
-import controller.RunListener;
-import controller.SelectGizmoListener;
+import controller.*;
 import model.Model;
 
 import javax.swing.*;
@@ -12,16 +9,21 @@ import java.awt.event.ActionListener;
 
 public class BuildComps {
 
-    private ActionListener listener, sg, eg, pl;
+    private ActionListener listener, sg, eg, pl, cl;
     private Model model;
+    private RunGui gui;
 
 
-    public BuildComps(ActionListener l, Model m){
-        this.listener = l;
+    public BuildComps(ActionListener l, Model m, RunGui g){
+
         this.model = m;
-        this.sg = new SelectGizmoListener(model);
-        this.eg = new EditGizmoListener(model);
+        this.gui = g;
+
+        this.listener = l;
+        this.sg = new SelectGizmoListener(model, gui);
+        this.eg = new EditGizmoListener(gui, model);
         this.pl = new PhysicsListener(this, model);
+        this.cl = new ConnectionListener(gui, model);
     }
 
     private Font gf = new Font("Arial", Font.BOLD, 12);
@@ -32,13 +34,17 @@ public class BuildComps {
         //Different menu tabs - Add Gizmo's, Edit Gizmos, Physics, File
         JMenu addGizmo = new JMenu("Add Gizmo");
         JMenu editGizmo = new JMenu("Edit Gizmo");
+        JMenu connections = new JMenu("Connections");
         JMenu fileSL = new JMenu("File");
         JMenu physics = new JMenu("Physics");
 
         //Add Gizmo types
-        JMenuItem ball = new JMenuItem("Ball");
+        JMenuItem ball = new JMenuItem("Move Ball");
+        ball.setActionCommand("Ball");
         ball.addActionListener(sg);
         addGizmo.add(ball);
+
+        addGizmo.addSeparator();
 
         JMenuItem square = new JMenuItem("Square");
         square.addActionListener(sg);
@@ -57,8 +63,8 @@ public class BuildComps {
         addGizmo.add(leftFlipper);
 
         JMenuItem rightFlipper = new JMenuItem("Right Flipper");
-        square.addActionListener(sg);
         rightFlipper.addActionListener(sg);
+        addGizmo.add(rightFlipper);
 
         JMenuItem absorber = new JMenuItem("Absorber");
         absorber.addActionListener(sg);
@@ -75,26 +81,42 @@ public class BuildComps {
         move.addActionListener(eg);
         editGizmo.add(move);
 
-        JMenuItem connect = new JMenuItem("Connect");
-        connect.addActionListener(eg);
-        editGizmo.add(connect);
-
-        JMenuItem disconnect = new JMenuItem("Disconnect");
-        disconnect.addActionListener(eg);
-        editGizmo.add(disconnect);
-
         JMenuItem delete = new JMenuItem("Delete");
         delete.addActionListener(eg);
         editGizmo.add(delete);
         //Add tab to menuBar
         buildMenuBar.add(editGizmo);
 
-        //File options
+        JMenuItem gizCon = new JMenuItem("Connect Gizmo's");
+        gizCon.addActionListener(cl);
+        connections.add(gizCon);
+
+        JMenuItem gizDisCon = new JMenuItem("Disconnect Gizmo's");
+        gizDisCon.addActionListener(cl);
+        connections.add(gizDisCon);
+
+        connections.addSeparator();
+
+        JMenuItem keyCon = new JMenuItem("KeyConnect Gizmo");
+        keyCon.addActionListener(cl);
+        connections.add(keyCon);
+
+        JMenuItem keyDisCon = new JMenuItem("Remove KeyConnect");
+        keyDisCon.addActionListener(cl);
+        connections.add(keyDisCon);
+        buildMenuBar.add(connections);
+
+        //File options FIXME NEEDS LISTENER
         JMenuItem save = new JMenuItem("Save Board");
         fileSL.add(save);
+
         JMenuItem load = new JMenuItem("Load");
-        load.addActionListener(listener);
         fileSL.add(load);
+
+        fileSL.addSeparator();
+
+        JMenuItem reload = new JMenuItem("Reload Board");
+        fileSL.add(reload);
         //Add tab to menuBar
         buildMenuBar.add(fileSL);
 
@@ -124,6 +146,7 @@ public class BuildComps {
         switchMode.setFont(gf);
 
         JButton quit = new JButton("Quit");
+        quit.addActionListener(listener);
         quit.setMaximumSize(new Dimension(100,300));
         quit.setFont(gf);
 

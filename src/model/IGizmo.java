@@ -20,6 +20,7 @@ public interface IGizmo {
     List<IGizmo> getGizConnections();
 
     void addKeyConnect(String key, String upDown);
+    void removeKeyConnect(String command);
     List<String> getKeyConnections();
 
     int getXposinL();
@@ -29,6 +30,8 @@ public interface IGizmo {
 
     void setX(int x);
     void setY(int y);
+
+
     //void keyDisconnect(String key); //FIXME Might have to change
 
 }

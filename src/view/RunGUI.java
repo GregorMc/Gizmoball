@@ -1,10 +1,6 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 
@@ -20,6 +16,8 @@ public class RunGui {
     private JFrame frame;
     private ActionListener listener;
     private KeyListener magicKeyListener, runKeyListener;
+
+    private Color textBoxColour = Color.WHITE;
 
     private Board board;
     private Boolean runMode = false;
@@ -41,6 +39,8 @@ public class RunGui {
         buildMenu = new JMenuBar();
 
         this.textbox = new JPanel();
+        this.textbox.setBackground(textBoxColour);
+
         this.textLabel = new JLabel();
 
         board = new Board(500, 500, model, this);
@@ -56,7 +56,7 @@ public class RunGui {
     public void createAndShowGUI() {
 
         //Create build and run components
-        BuildComps makeBuildComp = new BuildComps(listener, model);
+        BuildComps makeBuildComp = new BuildComps(listener, model,this);
         RunComps makeRunComp = new RunComps(listener);
 
         frame = new JFrame("Gizmoball");
@@ -144,5 +144,15 @@ public class RunGui {
         return runMode;
     }
 
-
+    public void changeText(String message){
+        if(textBoxColour == Color.WHITE){
+            textBoxColour = Color.YELLOW;
+            textbox.setBackground(textBoxColour);
+        } else {
+            textBoxColour = Color.WHITE;
+            textbox.setBackground(textBoxColour);
+        }
+        textLabel.setText(message);
+        SwingUtilities.updateComponentTreeUI(frame);
+    }
 }
