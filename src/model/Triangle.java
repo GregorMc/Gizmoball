@@ -261,5 +261,7 @@ public class Triangle implements IGizmo {
         this.ypos = y;
     }
 
-
+    public int getRotationNum() {
+        return this.rotationNum;
+    }
 }

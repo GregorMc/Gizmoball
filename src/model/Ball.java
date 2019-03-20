@@ -49,6 +49,10 @@ public class Ball {
 
     }
 
+    public String getId(){
+        return this.id;
+    }
+
     // Ball specific methods that deal with double precision.
     public double getExactX() {
         return xpos;

@@ -1,6 +1,7 @@
 package view;
 
 import controller.PhysicsListener;
+import model.Model;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,11 +10,15 @@ import java.awt.event.KeyListener;
 
 public class RunComps {
 
-    private ActionListener listener, physicsList;
+    private ActionListener listener, plisten;
+    private Model model;
+    private RunGui gui;
 
-
-    public RunComps(ActionListener l){
+    public RunComps(ActionListener l, Model m, RunGui g){
         this.listener = l;
+        this.model = m;
+        this.gui = g;
+        this.plisten = new PhysicsListener(gui,model);
     }
 
     private Font gf = new Font("Arial", Font.BOLD, 12);
@@ -24,9 +29,11 @@ public class RunComps {
         JMenu physics = new JMenu("Physics");
 
         JMenuItem friction = new JMenuItem("Change Friction");
+        friction.addActionListener(plisten);
         physics.add(friction);
 
         JMenuItem gravity = new JMenuItem("Change Gravity");
+        gravity.addActionListener(plisten);
         physics.add(gravity);
 
         runMenu.add(physics);

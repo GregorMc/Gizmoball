@@ -6,10 +6,7 @@ import physics.LineSegment;
 import physics.Vect;
 
 import javax.swing.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Model extends Observable {
@@ -39,6 +36,8 @@ public class Model extends Observable {
     private Boolean needKeyCode;
     private int lastKeyCode = 0;
 
+    private Boolean loaded;
+
     private Ball ball;
     private Walls walls;
     private double MU;
@@ -66,7 +65,7 @@ public class Model extends Observable {
         this.gizmoSelected = false;
         this.actionSelected = false;
         this.needKeyCode = false;
-
+        this.loaded = false;
         this.runMode = false;
     }
 
@@ -273,6 +272,10 @@ public class Model extends Observable {
         this.notifyObservers();
     }
 
+    public double getGetGravity(){
+        return this.gravity/19;
+    }
+
     private Ball movelBallForTime(Ball ball, double time) {
 
         double newX = 0.0;
@@ -368,19 +371,99 @@ public class Model extends Observable {
         }
     }
 
+    public void saveBoard(String filename) throws IOException {
+
+        //Setting up file
+        File fout = new File(filename+".txt");
+        FileOutputStream filestream = new FileOutputStream(fout);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(filestream));
+
+        String line;
+        //Save all gizmos
+        for(IGizmo gizmo: gizmos){
+            if(gizmo instanceof Triangle){
+                Triangle t = (Triangle)gizmo;
+                line = "Triangle " + gizmo.getID() + " " + t.getXposinL() + " " + t.getYposinL();
+                bw.write(line);
+                bw.newLine();
+                //Get triangle rotation number
+                for(int i=0; i < t.getRotationNum() ;i++){
+                    line = "Rotate " + t.getID();
+                    bw.write(line);
+                    bw.newLine();
+                }
+            } else if(gizmo instanceof  Square){
+                Square s = (Square)gizmo;
+                line = "Square " + gizmo.getID() + " " + gizmo.getXposinL() + " " + gizmo.getYposinL();
+                bw.write(line);
+                bw.newLine();
+            } else if(gizmo instanceof CircleGiz){
+                CircleGiz c = (CircleGiz) gizmo;
+                line = "Circle " + gizmo.getID() + " " + gizmo.getXposinL() + " " + gizmo.getYposinL();
+                bw.write(line);
+                bw.newLine();
+            } else if(gizmo instanceof Absorber){
+                Absorber a = (Absorber) gizmo;
+                line = "Absorber " + gizmo.getID() + " " + a.getXpos() + " " + a.getYpos1() + " " + a.getXpos2() + " " + a.getYpos2();
+                bw.write(line);
+                bw.newLine();
+            } else if(gizmo instanceof LeftFlipper){
+                LeftFlipper lf = (LeftFlipper) gizmo;
+                line = "LeftFlipper " + gizmo.getID() + " " + gizmo.getXposinL() + " " + gizmo.getYposinL();
+                bw.write(line);
+                bw.newLine();
+            } else if(gizmo instanceof RightFlipper){
+                RightFlipper rf = (RightFlipper) gizmo;
+                line = "RightFlipper " + gizmo.getID() + " " + gizmo.getXposinL() + " " + gizmo.getYposinL();
+                bw.write(line);
+                bw.newLine();
+            }
+
+            if(!gizmo.getGizConnections().isEmpty()){
+                List<IGizmo> gizConnections = gizmo.getGizConnections();
+                for(IGizmo g: gizConnections){
+                    line = "Connect " + gizmo.getID() + " " + g.getID();
+                    bw.write(line);
+                    bw.newLine();
+                }
+            }
+
+            if(!gizmo.getKeyConnections().isEmpty()){
+                List<String> keyConnections = gizmo.getKeyConnections();
+                for(String command: keyConnections){
+                    String[] args = command.split(".", 3);
+                    if((args.length >= 2)){
+                        line = "KeyConnect key" + args[1] + " " + args[2] +" "+ gizmo.getID();
+                        bw.write(line);
+                        bw.newLine();
+                    }
+                }
+            }
+        }
+        //Save all connections
+        //Save all keyConnections
+
+        //FIXME Won't work for multiple balls
+        if(ball != null){
+            line = "Ball " + ball.getId() + " " + ball.getExactX()/L + " " + ball.getExactY()/L + " " + ball.getVelo().x() + " " + ball.getVelo().x();
+            bw.write(line);
+            bw.newLine();
+        }
+        bw.close();
+    }
 
     public void loadBoard() {
-        gizmos.clear();
-        flippers.clear();
-        keyPresses.clear();
         //FIXME Have to refresh keyConnections ??
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Open");
         int returnVal = fc.showOpenDialog(null);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+            gizmos.clear();
+            flippers.clear();
+            keyPresses.clear();
             if (fc.getSelectedFile().isFile()) {
-                file = fc.getSelectedFile();
+                this.file = fc.getSelectedFile();
                 try {
                     FileReader fileReader = new FileReader(file);
                     BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -433,13 +516,84 @@ public class Model extends Observable {
                         line = bufferedReader.readLine();
 
                     }
-                } catch (IOException e) {
+                    this.loaded = true;
+                } catch (IOException | IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
                     e.printStackTrace();
+                    System.out.println("Corrupt File");
                 }
             }
+        } else {
+            System.out.println("User cancelled load");
+            this.loaded = false;
         }
         this.setChanged();
         this.notifyObservers();
+    }
+
+    public boolean getLoaded(){
+        return this.loaded;
+    }
+
+    public void reloadBoard(){
+        gizmos.clear();
+        flippers.clear();
+        keyPresses.clear();
+        try {
+            FileReader fileReader = new FileReader(this.file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                String[] args = line.split(" ");
+                System.out.println("-----------------");
+                if (args.length > 0) {
+                    switch (args[0]) {
+                        case "Triangle":
+                            addGizmo(new Triangle(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3])));
+                            break;
+                        case "Rotate":
+                            IGizmo gizmo = getGizmoByID(args[1]);
+                            Triangle t = (Triangle) gizmo;
+                            t.rotateTriangle();
+                            break;
+                        case "Connect":
+                            IGizmo produce = getGizmoByID(args[1]);
+                            IGizmo consumer = getGizmoByID(args[2]);
+                            produce.addGizConnect(consumer);
+                            break;
+                        case "Square":
+                            addGizmo(new Square(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3])));
+                            break;
+                        case "Circle":
+                            addGizmo(new CircleGiz(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3])));
+                            break;
+                        case "LeftFlipper":
+                            addFlipper(new LeftFlipper(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3])));
+                            break;
+                        case "RightFlipper":
+                            addFlipper(new RightFlipper(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3])));
+                            break;
+                        case "Absorber":
+                            addGizmo(new Absorber(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5])));
+                            break;
+                        case "Ball":
+                            ball = new Ball(args[1], Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]), Double.parseDouble(args[5]));
+                            break;
+                        case "KeyConnect":
+                            addKeyConnect(args[4],args[2],args[3]);
+                            break;
+                        default:
+                            System.out.println("Failed to load line:\n" + line);
+                            break;
+                    }
+                }
+
+                line = bufferedReader.readLine();
+                this.setChanged();
+                this.notifyObservers();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //Getters and Setters.
@@ -483,15 +637,15 @@ public class Model extends Observable {
     }
 
     public void setMU(double mu){
-        this.MU = mu;
+        this.MU = (mu/1000)/15;
     }
 
     public void setMU2(double mu2) {
-        this.MU2 = mu2;
+        this.MU2 = (mu2/1000)/15;
     }
 
     public double getMU() {
-        return MU;
+        return (MU*1000)*15;
     }
 
     public void setGizmoSelected(Boolean selected){
@@ -503,6 +657,6 @@ public class Model extends Observable {
     }
 
     public double getMU2() {
-        return MU2;
+        return (MU2*1000)*15;
     }
 }

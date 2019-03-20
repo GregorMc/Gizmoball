@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 
 public class BuildComps {
 
-    private ActionListener listener, sg, eg, pl, cl;
+    private ActionListener listener, sg, eg, pl, cl, fl;
     private Model model;
     private RunGui gui;
 
@@ -22,8 +22,9 @@ public class BuildComps {
         this.listener = l;
         this.sg = new SelectGizmoListener(model, gui);
         this.eg = new EditGizmoListener(gui, model);
-        this.pl = new PhysicsListener(this, model);
+        this.pl = new PhysicsListener(gui, model);
         this.cl = new ConnectionListener(gui, model);
+        this.fl = new FileListener(model, gui);
     }
 
     private Font gf = new Font("Arial", Font.BOLD, 12);
@@ -108,14 +109,17 @@ public class BuildComps {
 
         //File options FIXME NEEDS LISTENER
         JMenuItem save = new JMenuItem("Save Board");
+        save.addActionListener(fl);
         fileSL.add(save);
 
-        JMenuItem load = new JMenuItem("Load");
+        JMenuItem load = new JMenuItem("Load Board");
+        load.addActionListener(fl);
         fileSL.add(load);
 
         fileSL.addSeparator();
 
         JMenuItem reload = new JMenuItem("Reload Board");
+        reload.addActionListener(fl);
         fileSL.add(reload);
         //Add tab to menuBar
         buildMenuBar.add(fileSL);
@@ -156,34 +160,6 @@ public class BuildComps {
         return buildButtons;
     }
 
-    public void promptFriction() {
-        JTextField mu = new JTextField();
-        JTextField mu2 = new JTextField();
-
-        String[] options = {"OK","Cancel"};
-        Object[] fields = {
-                "New MU value", mu,
-                "New MU2 value", mu2
-        };
-
-        int result = JOptionPane.showOptionDialog(null,fields,"Change Friction",JOptionPane.YES_OPTION,JOptionPane.CANCEL_OPTION,null,options,options[0]);
-
-
-        if (result == JOptionPane.OK_OPTION) {
-
-            String ad = mu.getText();
-            String add = mu2.getText();
-
-            if (ad.isEmpty()|| add.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "please enter values for both mu and mu2");
-                return;
-            }
-
-            model.setMU(Double.parseDouble(mu.getText()));
-            model.setMU2(Double.parseDouble(mu2.getText()));
-        }
-
-    }
 
     public String getInput(String message){
         return JOptionPane.showInputDialog(message);
